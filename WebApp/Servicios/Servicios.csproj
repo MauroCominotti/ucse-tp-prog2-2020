@@ -43,11 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeneralService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contratos\Contratos.csproj">
+      <Project>{AFEE4439-32EF-4973-B607-8432A2473F2E}</Project>
+      <Name>Contratos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lógica de Negocios\Lógica de Negocios.csproj">
+      <Project>{195d9f24-20ae-43fb-8509-dd62d3a7a898}</Project>
+      <Name>Lógica de Negocios</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

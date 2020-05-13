@@ -1,31 +1,15 @@
 ﻿using Contratos;
+using Lógica_de_Negocios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lógica_de_Negocios
+namespace Servicios
 {
-    public sealed class Lógica : IServicioWeb
+    class GeneralService : IServicioWeb
     {
-        private static Lógica instance = null;
-        private Lógica()
-        {
-
-        }
-        public static Lógica Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Lógica();
-                }
-                return instance;
-            }
-        }
-
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
             throw new NotImplementedException();
@@ -138,9 +122,14 @@ namespace Lógica_de_Negocios
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            var lista = Empresa.ObtenerDirectoras();
+            //transformar el resultado de la logica de negocios a la clase de contratos
+            return new Grilla<Directora>() { 
+                Lista = ConvertirLista(lista).ToArray(), 
+                CantidadRegistros = lista.Count() 
+            };
         }
-
+        // TODO > terminar metodos y hacer metodos genericos para transformar listas de LogicaDeNegocios en Contrato
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
@@ -189,6 +178,36 @@ namespace Lógica_de_Negocios
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
             throw new NotImplementedException();
+        }
+
+
+
+        // METODOS
+
+        public List<Directora> ConvertirLista(List<LogicaDirectora> lista)
+        {
+            List<Directora> resultado = new List<Directora>();
+            foreach (var elem in lista)
+            {
+                resultado.Add(new Directora()
+                {
+                    Apellido = elem.Apellido,
+                    Email = elem.Email,
+                    Cargo = elem.Cargo,
+                    FechaIngreso = elem.FechaIngreso,
+                    Id = elem.Id,
+                    Institucion = new Institucion() { 
+                        Ciudad = elem.Institucion.Ciudad,
+                        Direccion = elem.Institucion.Direccion,
+                        Id = elem.Institucion.Id,
+                        Nombre = elem.Institucion.Nombre,
+                        Provincia = elem.Institucion.Provincia,
+                        Telefono = elem.Institucion.Telefono
+                    },
+                    Nombre = elem.Nombre
+                });
+            }
+            return resultado;
         }
     }
 }
