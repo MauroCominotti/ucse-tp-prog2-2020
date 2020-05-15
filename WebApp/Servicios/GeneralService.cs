@@ -147,7 +147,7 @@ namespace Servicios
 
         public string ObtenerNombreGrupo()
         {
-            throw new NotImplementedException();
+            return "Cominotti Mauro, Yacovino Juan, Zoja Emanuel";
         }
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
