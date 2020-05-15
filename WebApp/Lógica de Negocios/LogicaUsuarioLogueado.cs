@@ -12,7 +12,6 @@ namespace Lógica_de_Negocios
         {
             Padre, Directora, Docente
         }
-
         public class UsuarioLogueado
         {
             public string Nombre { get; set; }
