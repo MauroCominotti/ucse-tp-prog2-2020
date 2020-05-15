@@ -18,7 +18,7 @@ namespace Lógica_de_Negocios
         //--------------------------------- GUARDAR ------------------------------------------------------------------------------------
         static void Guardar(List<LogicaDirectora> Lista)
         {
-            using (StreamWriter file = new System.IO.StreamWriter(path, false))
+            using (StreamWriter file = new StreamWriter(path, false))
             {
                 string JsonContenido = JsonConvert.SerializeObject(Lista);
                 file.Write(JsonContenido);
