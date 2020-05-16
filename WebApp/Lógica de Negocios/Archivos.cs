@@ -82,6 +82,18 @@ namespace Lógica_de_Negocios
             return listdir;
         }
 
+        public List<Hijo> AdquirirAlumnos()
+        {
+            List<Hijo> listalum = new List<Hijo>();
+            ruta = Path.Combine(carpeta, hijos);
+            using (StreamReader re = new StreamReader(ruta))
+            {
+                string json = re.ReadToEnd();
+                listalum = JsonConvert.DeserializeObject<List<Hijo>>(json);
+            }
+            return listalum;
+        }
+
         //Guardar en archivos----------------------------------------------------
         public void EscribirRegistro(Registros reg, bool suprimir)
         {
@@ -168,7 +180,7 @@ namespace Lógica_de_Negocios
             string rutas = Path.Combine(carpeta, usuarios);
             List<Usuario> listusu = new List<Usuario>();
             listusu = AdquirirUsuario();
-            int cont = 0; bool ban = true;
+            int cont = 0; bool br = true;
             if (listusu != null)
             {
                 foreach (var item in listusu)
@@ -182,12 +194,12 @@ namespace Lógica_de_Negocios
                             listusu.RemoveAt(cont);
                             listusu.Insert(cont, usu);
                         }
-                        ban = false;
+                        br = false;
                         break;
                     }
                     cont++;
                 }
-                if (ban)
+                if (br)
                     listusu.Add(usu);
             }
             else
@@ -203,6 +215,47 @@ namespace Lógica_de_Negocios
             }
         }
 
+        public void EscribirAlumno(Hijo alumno, bool suprimir)
+        {
+            string rutas = Path.Combine(carpeta, hijos);
+            List<Hijo> listalum = new List<Hijo>();
+            listalum = AdquirirAlumnos();
+            int cont = 0; bool br = true;
+            if (listalum != null)
+            {
+                foreach (var item in listalum)
+                {
+                    if (item.Id == alumno.Id)
+                    {
+                        if (suprimir)
+                        {
+                            listalum.RemoveAt(cont);
+                        }
+                        else
+                        {
+                            listalum.RemoveAt(cont);
+                            listalum.Insert(cont, alumno);
+                        }
+                        br = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (br)
+                    listalum.Add(alumno);
+            }
+            else
+            {
+                listalum = new List<Hijo>();
+                listalum.Add(alumno);
+            }
+
+            using (StreamWriter escritor = new StreamWriter(ruta, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listalum);
+                escritor.Write(Serializar);
+            }
+        }
 
 
     }

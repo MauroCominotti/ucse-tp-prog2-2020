@@ -26,10 +26,14 @@ namespace Lógica_de_Negocios
 
 
 
-        public static Resultado PermisosDirectora(Roles rol)//TODO Acá para ver si tiene los permisos necesarios, hay que hacerlo con la clase Resultados
+        public static Resultado Permisos(Roles rol)   //Acá para ver si tiene los permisos necesarios
         {
-            Resultado resultado = new Resultado();
-            return resultado;
+            Resultado result = new Resultado();
+            if ((int)rol != 1)
+            {
+                result.Errores.Add("Permisos insuficientes");
+            }
+            return result;
         } 
     }
     

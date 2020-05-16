@@ -12,7 +12,17 @@ namespace Servicios
     {
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            List<Hijo> Alumno = Archivos.Instancia.AdquirirAlumnos();
+            if (Alumno != null && Alumno.Count() > 0)
+                hijo.Id = Alumno.LastOrDefault().Id + 1;
+            else
+                hijo.Id = 100;
+            Resultado resul = Empresa.Permisos(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
+            if (resul.EsValido)
+            {
+                Archivos.Instancia.EscribirAlumno(hijo, false);
+            }
+            return resul;
         }
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
@@ -41,7 +51,7 @@ namespace Servicios
                 regis.Roles.ToList().Add(usuarioLogueado.RolSeleccionado);
                 Archivos.Instancia.EscribirRegistro(regis, false);
             }
-                Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
+                Resultado ress = Empresa.Permisos(usuarioLogueado.RolSeleccionado); // validamos los permisos
             if (ress.EsValido)
             {
 
