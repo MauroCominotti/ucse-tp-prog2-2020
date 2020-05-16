@@ -1,8 +1,8 @@
-﻿using Contratos;
-using Lógica_de_Negocios;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Contratos;
+using Lógica_de_Negocios;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +17,51 @@ namespace Servicios
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            bool bandera = false;
+            if (!Empresa.RegistroUsuario(directora.Email)) //Directora inexistente
+            {
+                bandera = true;
+                List<Usuario> usuarios = Archivos.Instancia.AdquirirUsuario();
+                if (usuarios != null)
+                {
+                    Usuario us = usuarios.LastOrDefault();
+                    if (us != null)
+                        directora.Id = us.Id + 1;
+                    else
+                        directora.Id = 1;
+                }
+                else
+                {
+                    directora.Id = 1;
+                }
+            }
+            else //Directora existente
+            {
+                Registros regis = Archivos.Instancia.AdquirirRegistros().Where(x => x.Email == directora.Email).FirstOrDefault();
+                regis.Roles.ToList().Add(usuarioLogueado.RolSeleccionado);
+                Archivos.Instancia.EscribirRegistro(regis, false);
+            }
+                Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
+            if (ress.EsValido)
+            {
+
+                Archivos.Instancia.EscribirDirectora(directora, false);
+                Archivos.Instancia.EscribirUsuario(directora, false);
+                if (bandera)
+                {
+                    List<Roles> roles = new List<Roles>();
+                    roles.Add(Roles.Directora);
+                    Registros nuevoregistro = new Registros()
+                    {
+                        Email = directora.Email,
+                        Id = directora.Id,
+                        Password = new Random().Next(100000, 999999).ToString(),
+                        Roles = roles.ToArray(),
+                    };
+                    Archivos.Instancia.EscribirRegistro(nuevoregistro, false);
+                }
+            }
+            return ress;
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
@@ -122,12 +166,13 @@ namespace Servicios
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            var lista = Empresa.ObtenerDirectoras();
+            // var lista = Empresa.ObtenerDirectoras();
             //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Directora>() { 
-                Lista = ConvertirLista(lista).ToArray(), 
-                CantidadRegistros = lista.Count() 
-            };
+            //   return new Grilla<Directora>() { 
+            //       Lista = ConvertirLista(lista).ToArray(), 
+            //      CantidadRegistros = lista.Count() 
+            //   };
+            throw new NotImplementedException();
         }
         // TODO > terminar metodos y hacer metodos genericos para transformar listas de LogicaDeNegocios en Contrato
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
