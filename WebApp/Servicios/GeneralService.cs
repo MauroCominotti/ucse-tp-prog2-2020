@@ -17,7 +17,7 @@ namespace Servicios
                 hijo.Id = Alumno.LastOrDefault().Id + 1;
             else
                 hijo.Id = 100;
-            Resultado resul = Empresa.Permisos(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
             if (resul.EsValido)
             {
                 Archivos.Instancia.EscribirAlumno(hijo, false);
@@ -51,7 +51,7 @@ namespace Servicios
                 regis.Roles.ToList().Add(usuarioLogueado.RolSeleccionado);
                 Archivos.Instancia.EscribirRegistro(regis, false);
             }
-                Resultado ress = Empresa.Permisos(usuarioLogueado.RolSeleccionado); // validamos los permisos
+                Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
             if (ress.EsValido)
             {
 

@@ -26,7 +26,7 @@ namespace Lógica_de_Negocios
 
 
 
-        public static Resultado Permisos(Roles rol)   //Acá para ver si tiene los permisos necesarios
+        public static Resultado PermisosDirectora(Roles rol)   //Acá para ver si tiene los permisos necesarios
         {
             Resultado result = new Resultado();
             if ((int)rol != 1)
