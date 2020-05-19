@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Contratos;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,42 +10,29 @@ namespace Lógica_de_Negocios
 {
     public static class Empresa
     {
-        static string path = Directory.GetCurrentDirectory().Replace("\\bin\\Debug", "") + @"\Datos\ListaDirectoras.txt";
-        public static List<LogicaDirectora> ListaDirectoras { get; set; }
-        public static List<LogicaDirectora> ObtenerDirectoras() => ListaDirectoras;
-
-
-        //--------------------------------- GUARDAR ------------------------------------------------------------------------------------
-        static void Guardar(List<LogicaDirectora> Lista)
+        public static bool RegistroUsuario(string email) //Para ver si ya se logueo anteriormente
         {
-            using (StreamWriter file = new StreamWriter(path, false))
+            List<LogicaUsuario> Usuarios = Archivo.Instancia.LeerUsuario();
+            if (Usuarios != null)
             {
-                string JsonContenido = JsonConvert.SerializeObject(Lista);
-                file.Write(JsonContenido);
-            }
-        }
-        //--------------------------------- LEER ------------------------------------------------------------------------------------
-        static List<LogicaDirectora> LeerListasDirectoras()
-        {
-            if (!File.Exists(path))
-            {
-                File.Create(path);
-                List<LogicaDirectora> lista = new List<LogicaDirectora>();
-                return lista;
-            }
-            else
-            {
-                using (StreamReader file = new StreamReader(path))
+                LogicaUsuario us = Usuarios.Where(x => x.Email == email).FirstOrDefault();
+                if (us != null)
                 {
-                    string JsonContenido = file.ReadToEnd();
-                    List<LogicaDirectora> lista = JsonConvert.DeserializeObject<List<LogicaDirectora>>(JsonContenido);
-
-                    if (lista == null)
-                        lista = new List<LogicaDirectora>();
-
-                    return (lista);
+                    return true;
                 }
             }
+            return false;
         }
+
+        public static Resultado PermisosDirectora(Roles rol)   //Acá para ver si tiene los permisos necesarios
+        {
+            Resultado result = new Resultado();
+            if ((int)rol != 1)  // TODO > PREGUNTAR EMA ZOJA
+            {
+                result.Errores.Add("Permisos insuficientes");
+            }
+            return result;
+        } 
     }
+    
 }

@@ -1,10 +1,11 @@
-﻿using Contratos;
-using Lógica_de_Negocios;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Contratos;
+using Lógica_de_Negocios;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Servicios
 {
@@ -12,12 +13,71 @@ namespace Servicios
     {
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado resul = new Resultado();
+            List<LogicaHijo> Alumno = Archivo.Instancia.LeerAlumnos();
+            if (Alumno != null && Alumno.Count() > 0)
+                hijo.Id = Alumno.LastOrDefault().Id + 1;
+            else
+                resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
+                //hijo.Id = 100; // TODO > Aca tendria q dar un error
+            resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
+            if (resul.EsValido)
+            {
+                var hijoCasteado = AutoMapper.Instancia.Mapear(hijo, new LogicaHijo());
+                Archivo.Instancia.Guardar(hijoCasteado, false);
+            }
+            
+            return resul;
         }
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+
+            bool bandera = false;
+            if (!Empresa.RegistroUsuario(directora.Email)) //Directora inexistente
+            {
+                bandera = true;
+                List<LogicaUsuario> usuarios = Archivo.Instancia.LeerUsuario();
+                if (usuarios != null)
+                {
+                    LogicaUsuario us = usuarios.LastOrDefault();
+                    if (us != null)
+                        directora.Id = us.Id + 1;
+                    else
+                        directora.Id = 1;
+                }
+                else
+                {
+                    directora.Id = 1;
+                }
+            }
+            else //Directora existente
+            {
+                Registros regis = Archivo.Instancia.LeerRegistros().Where(x => x.Email == directora.Email).FirstOrDefault();
+                regis.Roles.ToList().Add(usuarioLogueado.RolSeleccionado);
+                Archivo.Instancia.Guardar(regis, false);
+            }
+                Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
+            if (ress.EsValido)
+            {
+                var directoraCasteada = AutoMapper.Instancia.Mapear(directora, new LogicaDirectora());
+                Archivo.Instancia.Guardar(directoraCasteada, false);
+                Archivo.Instancia.Guardar(directoraCasteada, false);
+                if (bandera)
+                {
+                    List<Roles> roles = new List<Roles>();
+                    roles.Add(Roles.Directora);
+                    Registros nuevoregistro = new Registros()
+                    {
+                        Email = directora.Email,
+                        Id = directora.Id,
+                        Password = new Random().Next(100000, 999999).ToString(),
+                        Roles = roles.ToArray(),
+                    };
+                    Archivo.Instancia.Guardar(nuevoregistro, false);
+                }
+            }
+            return ress;
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
@@ -107,7 +167,15 @@ namespace Servicios
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            var lista = Archivo.Instancia.LeerAlumnos();
+            //transformar el resultado de la logica de negocios a la clase de contratos
+            return new Grilla<Hijo>()
+            {
+                Lista = AutoMapper.Instancia.ConvertirLista(lista, new Hijo())
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = lista.Count()
+            };
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
@@ -122,14 +190,17 @@ namespace Servicios
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            var lista = Empresa.ObtenerDirectoras();
+            var lista = Archivo.Instancia.LeerDirectoras(); // TODO > Preguntar Maxi permisos para leer lista
             //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Directora>() { 
-                Lista = ConvertirLista(lista).ToArray(), 
-                CantidadRegistros = lista.Count() 
+            return new Grilla<Directora>()
+            {
+                Lista = AutoMapper.Instancia.ConvertirLista(lista, new Directora())
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = lista.Count()
             };
         }
-        // TODO > terminar metodos y hacer metodos genericos para transformar listas de LogicaDeNegocios en Contrato
+        
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
@@ -137,7 +208,15 @@ namespace Servicios
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            var lista = Archivo.Instancia.LeerDirectoras(); // TODO > Cambiar metodo LeerDirectoras() a LeerDocentes()
+            //transformar el resultado de la logica de negocios a la clase de contratos
+            return new Grilla<Docente>()
+            {
+                Lista = AutoMapper.Instancia.ConvertirLista(lista, new Docente())
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = lista.Count()
+            };
         }
 
         public Institucion[] ObtenerInstituciones()
@@ -157,7 +236,15 @@ namespace Servicios
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            var lista = Archivo.Instancia.LeerDirectoras();  // TODO > Cambiar metodo LeerDirectoras() a LeerPadres()
+            //transformar el resultado de la logica de negocios a la clase de contratos
+            return new Grilla<Padre>()
+            {
+                Lista = AutoMapper.Instancia.ConvertirLista(lista, new Padre())
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = lista.Count()
+            };
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
@@ -180,34 +267,5 @@ namespace Servicios
             throw new NotImplementedException();
         }
 
-
-
-        // METODOS
-        // TODO > Probar automapper
-        public List<Directora> ConvertirLista(List<LogicaDirectora> lista)
-        {
-            List<Directora> resultado = new List<Directora>();
-            foreach (var elem in lista)
-            {
-                resultado.Add(new Directora()
-                {
-                    Apellido = elem.Apellido,
-                    Email = elem.Email,
-                    Cargo = elem.Cargo,
-                    FechaIngreso = elem.FechaIngreso,
-                    Id = elem.Id,
-                    Institucion = new Institucion() { 
-                        Ciudad = elem.Institucion.Ciudad,
-                        Direccion = elem.Institucion.Direccion,
-                        Id = elem.Institucion.Id,
-                        Nombre = elem.Institucion.Nombre,
-                        Provincia = elem.Institucion.Provincia,
-                        Telefono = elem.Institucion.Telefono
-                    },
-                    Nombre = elem.Nombre
-                });
-            }
-            return resultado;
-        }
     }
 }
