@@ -183,7 +183,7 @@ namespace Servicios
 
 
         // METODOS
-
+        // TODO > Probar automapper
         public List<Directora> ConvertirLista(List<LogicaDirectora> lista)
         {
             List<Directora> resultado = new List<Directora>();
