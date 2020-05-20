@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,31 +28,10 @@ namespace Servicios
             }
             
             return resul;
-=======
-﻿using Contratos;
-using Logica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Servicios
-{
-
-    public class GeneralService : IServicioWeb
-    {
-        private static Empresa Empresa = new Empresa();
-
-        public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
-        {
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-<<<<<<< HEAD
 
             bool bandera = false;
             if (!Empresa.RegistroUsuario(directora.Email)) //Directora inexistente
@@ -100,9 +78,6 @@ namespace Servicios
                 }
             }
             return ress;
-=======
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
@@ -192,7 +167,6 @@ namespace Servicios
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-<<<<<<< HEAD
             var lista = Archivo.Instancia.LeerAlumnos();
             //transformar el resultado de la logica de negocios a la clase de contratos
             return new Grilla<Hijo>()
@@ -202,9 +176,6 @@ namespace Servicios
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
                 CantidadRegistros = lista.Count()
             };
-=======
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
@@ -219,7 +190,6 @@ namespace Servicios
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-<<<<<<< HEAD
             var lista = Archivo.Instancia.LeerDirectoras(); // TODO > Preguntar Maxi permisos para leer lista
             //transformar el resultado de la logica de negocios a la clase de contratos
             return new Grilla<Directora>()
@@ -231,23 +201,6 @@ namespace Servicios
             };
         }
         
-=======
-            var lista = Empresa.ObtenerDIrectoras();
-
-            //transformar el resultado de la logica de negocios a la clase de contratos
-            List<Directora> resultado = new List<Directora>();
-            foreach (var item in lista)
-            {
-                resultado.Add(new Directora()
-                {
-                    Id = item.Id
-                });
-            }
-
-            return new Grilla<Directora>() { Lista = resultado.ToArray(), CantidadRegistros = lista.Count };
-        }
-
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
@@ -255,7 +208,6 @@ namespace Servicios
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-<<<<<<< HEAD
             var lista = Archivo.Instancia.LeerDirectoras(); // TODO > Cambiar metodo LeerDirectoras() a LeerDocentes()
             //transformar el resultado de la logica de negocios a la clase de contratos
             return new Grilla<Docente>()
@@ -265,9 +217,6 @@ namespace Servicios
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
                 CantidadRegistros = lista.Count()
             };
-=======
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Institucion[] ObtenerInstituciones()
@@ -277,11 +226,7 @@ namespace Servicios
 
         public string ObtenerNombreGrupo()
         {
-<<<<<<< HEAD
             return "Cominotti Mauro, Yacovino Juan, Zoja Emanuel";
-=======
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
@@ -291,7 +236,6 @@ namespace Servicios
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-<<<<<<< HEAD
             var lista = Archivo.Instancia.LeerDirectoras();  // TODO > Cambiar metodo LeerDirectoras() a LeerPadres()
             //transformar el resultado de la logica de negocios a la clase de contratos
             return new Grilla<Padre>()
@@ -301,9 +245,6 @@ namespace Servicios
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
                 CantidadRegistros = lista.Count()
             };
-=======
-            throw new NotImplementedException();
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
@@ -325,9 +266,5 @@ namespace Servicios
         {
             throw new NotImplementedException();
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> f556d7b46368999b6cb92bf1f91f10dfc8988210
     }
 }
