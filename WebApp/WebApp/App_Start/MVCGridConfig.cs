@@ -10,11 +10,16 @@ namespace WebApp
 
     using MVCGrid.Models;
     using MVCGrid.Web;
-    
+    using WebApp.Grid;
+
     public static class MVCGridConfig 
     {
         public static void RegisterGrids()
         {
+            DirectoresGrid.Register();
+            DocentesGrid.Register();
+            PadresGrid.Register();
+            AlumnosGrid.Register();
         }
     }
 }

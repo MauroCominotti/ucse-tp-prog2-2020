@@ -12,9 +12,7 @@ using WebApp.Models;
 namespace WebApp.Controllers
 {
     public class AccountController : BaseController
-    {
-        private static IServicioWeb servicio = new MockService();
-
+    {        
         public ActionResult Logoff()
         {
             if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
@@ -37,7 +35,7 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public ActionResult Login(LoginViewModel model)
         {
-            var resultado = servicio.ObtenerUsuario(model.Email, model.Clave);
+            var resultado = CreateService(true).ObtenerUsuario(model.Email, model.Clave);
 
             if (resultado != null)
             {

@@ -1,6 +1,7 @@
 ﻿using Contratos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,12 +53,12 @@ namespace Mocks
 
         public static List<Nota> _notas2 = new List<Nota>()
         {
-            new Nota(){ Id = 3, Leida = true, Titulo= "Nota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new Comentario[]{ } },            
+            new Nota(){ Id = 3, Leida = true, Titulo= "Nota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new Comentario[]{ } },
         };
 
         public static List<Nota> _notas3 = new List<Nota>()
         {
-            new Nota(){ Id = 4, Leida = false, Titulo= "Nota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new Comentario[]{ } },            
+            new Nota(){ Id = 4, Leida = false, Titulo= "Nota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new Comentario[]{ } },
         };
 
         public static List<Nota> _notas4 = new List<Nota>()
@@ -81,7 +82,7 @@ namespace Mocks
         };
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
-        {
+        {            
             directora.Id = _directoras.Count + 1;
             _directoras.Add(directora);
 
@@ -132,7 +133,7 @@ namespace Mocks
 
                     notasHijo.Add(nota);
 
-                    item.Notas = notasHijo.ToArray();                    
+                    item.Notas = notasHijo.ToArray();
                 }
             }
 
@@ -259,9 +260,9 @@ namespace Mocks
         {
             var _notas = _notas1.Union(_notas2).Union(_notas3).Union(_notas4);
 
-            var n = _notas.Single(x => x.Id == nota.Id);
-
-            n.Leida = true;
+            var n = _notas.SingleOrDefault(x => x.Id == nota.Id);
+            if (n != null)
+                n.Leida = true;
 
             return new Resultado();
         }
@@ -355,13 +356,13 @@ namespace Mocks
                 case Roles.Docente:
                     return _alumnos.Where(x => x.Sala.Id == 2 || x.Sala.Id == 4).ToArray();
                 default:
-                    throw new Exception("Rol no implementado");                    
+                    throw new Exception("Rol no implementado");
             }
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            return usuarioLogueado.RolSeleccionado == Roles.Docente ? _salas.Where(x=>x.Id == 2 || x.Id == 3).ToArray() : _salas.ToArray();
+            return usuarioLogueado.RolSeleccionado == Roles.Docente ? _salas.Where(x => x.Id == 2 || x.Id == 3).ToArray() : _salas.ToArray();
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)

@@ -127,13 +127,25 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\MVCGridConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AlumnosController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CuadernoController.cs" />
+    <Compile Include="Controllers\DirectoresController.cs" />
+    <Compile Include="Controllers\DocentesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PadresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Grid\AlumnosGrid.cs" />
+    <Compile Include="Grid\DirectoresGrid.cs" />
+    <Compile Include="Grid\DocentesGrid.cs" />
+    <Compile Include="Grid\PadresGrid.cs" />
+    <Compile Include="Models\HijoViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\MVCGridToolbarModel.cs" />
+    <Compile Include="Models\SalaViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Grid\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -175,6 +186,19 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
+    <Content Include="Views\Alumnos\Form.cshtml" />
+    <Content Include="Views\Alumnos\Index.cshtml" />
+    <Content Include="Views\Cuaderno\Book.cshtml" />
+    <Content Include="Views\Cuaderno\CrearNotas.cshtml" />
+    <Content Include="Views\Cuaderno\Index.cshtml" />
+    <Content Include="Views\Directores\Form.cshtml" />
+    <Content Include="Views\Directores\Index.cshtml" />
+    <Content Include="Views\Docentes\ASsign.cshtml" />
+    <Content Include="Views\Docentes\Form.cshtml" />
+    <Content Include="Views\Docentes\Index.cshtml" />
+    <Content Include="Views\Padres\Assign.cshtml" />
+    <Content Include="Views\Padres\Form.cshtml" />
+    <Content Include="Views\Padres\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Contratos\Contratos.csproj">

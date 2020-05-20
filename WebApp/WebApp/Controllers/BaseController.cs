@@ -13,12 +13,12 @@ namespace WebApp.Controllers
     [Authorize]
     public class BaseController : Controller
     {
-        protected UsuarioLogueado usuarioLogueado;
-        public static IServicioWeb CreateService()
+        public static IServicioWeb CreateService(bool realService = false)
         {
-            return new MockService(); //TODO > Cambiar por el cliente WCF cuando lo tengan listo.
+            return new MockService(); //TODO > Cambiar por el servicio real.  realService ? new RealService() : new MockService();          
         }
-        
+
+        protected UsuarioLogueado usuarioLogueado;
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (User.Identity.IsAuthenticated)
