@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Contratos;
-using Lógica_de_Negocios;
+using LogicaDeNegocios;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servicios;
 

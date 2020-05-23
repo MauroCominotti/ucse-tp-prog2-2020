@@ -209,6 +209,10 @@
       <Project>{c71db83d-c94e-46af-8579-b3dffe048a6c}</Project>
       <Name>Mocks</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Servicios\Servicios.csproj">
+      <Project>{8e5172ce-0749-475e-ad97-655eb1ad71de}</Project>
+      <Name>Servicios</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

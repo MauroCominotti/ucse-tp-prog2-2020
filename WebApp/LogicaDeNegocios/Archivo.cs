@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Lógica_de_Negocios
+namespace LogicaDeNegocios
 {
     public sealed class Archivo
     {
-        
         //Carpeta , archivos y ruta
         private string ruta;
         private const string directoras = @"directoras.txt";
@@ -23,6 +20,8 @@ namespace Lógica_de_Negocios
         private const string notas = @"notas.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory;//Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
         private string[] arrayRutas = { directoras, usuarios, padres, hijos, docentes, salas, registros, notas }; 
+
+        // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
         private static Archivo instancia = null;
         public static Archivo Instancia
@@ -46,6 +45,7 @@ namespace Lógica_de_Negocios
         public List<T> Leer<T>()
         {
             // c# inferencia de tipo en metodo generico
+            // https://sodocumentation.net/es/csharp/topic/27/genericos
             List<T> listusu = new List<T>();
             string rutaSeleccionada = arrayRutas.First(x => x == typeof(T).Name);
             ruta = Path.Combine(carpeta, rutaSeleccionada);

@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Contratos;
-using Lógica_de_Negocios;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+using LogicaDeNegocios;
 
 namespace Servicios
 {
-    class GeneralService : IServicioWeb
+    public class GeneralService : IServicioWeb
     {
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            Resultado resul = new Resultado();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // TODO > Cambie resul de lugar porque sino se sobreescribe al ponerlo al final
             List<LogicaHijo> Alumno = Archivo.Instancia.Leer<LogicaHijo>();
-            if (Alumno != null && Alumno.Count() > 0)
+            if (Alumno != null || Alumno.Count() > 0)
                 hijo.Id = Alumno.LastOrDefault().Id + 1;
             else
                 resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
-            resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
             if (resul.EsValido)
             {
                 var hijoCasteado = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
@@ -55,7 +51,7 @@ namespace Servicios
                 regis.Roles.ToList().Add(usuarioLogueado.RolSeleccionado);
                 Archivo.Instancia.Guardar(regis, false);
             }
-                Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
+            Resultado ress = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // validamos los permisos
             if (ress.EsValido)
             {
                 var directoraCasteada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
@@ -79,13 +75,12 @@ namespace Servicios
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            Resultado resul = new Resultado();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
             List<LogicaDocente> Docente = Archivo.Instancia.Leer<LogicaDocente>();
-            if (Docente != null && Docente.Count() > 0)
+            if (Docente != null || Docente.Count() > 0)
                 docente.Id = Docente.LastOrDefault().Id + 1;
             else
                 resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
-            resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
             if (resul.EsValido)
             {
                 var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
@@ -106,13 +101,12 @@ namespace Servicios
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            Resultado resul = new Resultado();
-            List<LogicaPadre> Padre = Archivo.Instancia.Leer<LogicaPadre>(); // TODO > Leer<>()
-            if (Padre != null && Padre.Count() > 0)
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            List<LogicaPadre> Padre = Archivo.Instancia.Leer<LogicaPadre>();
+            if (Padre != null || Padre.Count() > 0)
                 padre.Id = Padre.LastOrDefault().Id + 1;
             else
                 resul.Errores.Add("Error 404: Padre no encontrado en la base de datos.");
-            resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
             if (resul.EsValido)
             {
                 var padreCasteado = AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(padre);
@@ -163,32 +157,82 @@ namespace Servicios
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            Resultado resul = new Resultado();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
             List<LogicaHijo> Alumno = Archivo.Instancia.Leer<LogicaHijo>();
-            if (Alumno != null && Alumno.Count() > 0)
+            if (Alumno == null || Alumno.Count() == 0)
                 resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
-            resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); //Validacion de permisos de usuario
+            else
+            {
+                LogicaHijo alumnoSeleccionado = Alumno.Find(x => x.Id == id);
+                if (alumnoSeleccionado == null)
+                    resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
+            }
             if (resul.EsValido)
             {
                 var hijoCasteado = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
-                Archivo.Instancia.Guardar(hijoCasteado, false);
+                Archivo.Instancia.Guardar(hijoCasteado, true);
             }
             return resul;
         }
 
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            List<LogicaDirectora> Directora = Archivo.Instancia.Leer<LogicaDirectora>();
+            if (Directora == null || Directora.Count() == 0)
+                resul.Errores.Add("Error 404: Directora no encontrado en la base de datos.");
+            else
+            {
+                LogicaDirectora directoraSeleccionado = Directora.Find(x => x.Id == id);
+                if (directoraSeleccionado == null)
+                    resul.Errores.Add("Error 404: Directora no encontrado en la base de datos.");
+            }
+            if (resul.EsValido)
+            {
+                var directoraCasteado = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
+                Archivo.Instancia.Guardar(directoraCasteado, true);
+            }
+            return resul;
         }
 
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            List<LogicaDocente> Docente = Archivo.Instancia.Leer<LogicaDocente>();
+            if (Docente == null || Docente.Count() == 0)
+                resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
+            else
+            {
+                LogicaDocente docenteSeleccionado = Docente.Find(x => x.Id == id);
+                if (docenteSeleccionado == null)
+                    resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
+            }
+            if (resul.EsValido)
+            {
+                var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                Archivo.Instancia.Guardar(docenteCasteado, true);
+            }
+            return resul;
         }
 
         public Resultado EliminarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            List<LogicaPadre> Padre = Archivo.Instancia.Leer<LogicaPadre>();
+            if (Padre == null || Padre.Count() == 0)
+                resul.Errores.Add("Error 404: Padre no encontrado en la base de datos.");
+            else
+            {
+                LogicaPadre padreSeleccionado = Padre.Find(x => x.Id == id);
+                if (padreSeleccionado == null)
+                    resul.Errores.Add("Error 404: Padre no encontrado en la base de datos.");
+            }
+            if (resul.EsValido)
+            {
+                var padreCasteado = AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(padre);
+                Archivo.Instancia.Guardar(padreCasteado, true);
+            }
+            return resul;
         }
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
@@ -203,15 +247,23 @@ namespace Servicios
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            List<LogicaHijo> lista = Archivo.Instancia.Leer<LogicaHijo>();
-            //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Hijo>()
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resul.EsValido)
             {
-                Lista = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista)
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = lista.Count()
-            };
+                List<LogicaHijo> lista = Archivo.Instancia.Leer<LogicaHijo>();
+                //transformar el resultado de la logica de negocios a la clase de contratos
+                return new Grilla<Hijo>()
+                {
+                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                    CantidadRegistros = lista.Count()
+                };
+            }
+            else
+            {
+                return new Grilla<Hijo>();
+            }
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
@@ -226,17 +278,25 @@ namespace Servicios
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>(); // TODO > Preguntar Maxi permisos para leer lista
-            //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Directora>()
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resul.EsValido)
             {
-                Lista = AutoMapper.Instancia.ConvertirLista<LogicaDirectora, Directora>(lista)
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = lista.Count()
-            };
+                List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>();
+                //transformar el resultado de la logica de negocios a la clase de contratos
+                return new Grilla<Directora>()
+                {
+                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaDirectora, Directora>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                    CantidadRegistros = lista.Count()
+                };
+            }
+            else
+            {
+                return new Grilla<Directora>();
+            }
         }
-        
+
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
@@ -244,20 +304,32 @@ namespace Servicios
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>();
-            //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Docente>()
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resul.EsValido)
             {
-                Lista = AutoMapper.Instancia.ConvertirLista<LogicaDocente, Docente>(lista)
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = lista.Count()
-            };
+                List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>();
+                //transformar el resultado de la logica de negocios a la clase de contratos
+                return new Grilla<Docente>()
+                {
+                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaDocente, Docente>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                    CantidadRegistros = lista.Count()
+                };
+            }
+            else
+            {
+                return new Grilla<Docente>();
+            }
         }
 
         public Institucion[] ObtenerInstituciones()
         {
-            throw new NotImplementedException();
+            // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netcore-3.1
+            // ver la clase institucion para ver los criterios de igualdad
+            var listaDirectoras = Archivo.Instancia.Leer<LogicaDirectora>();
+            var listaInstituciones = listaDirectoras.Select(x => x.Institucion);
+            return AutoMapper.Instancia.ConvertirLista<LogicaInstitucion, Institucion>(listaInstituciones.Distinct().ToList()).ToArray();
         }
 
         public string ObtenerNombreGrupo()
@@ -272,15 +344,23 @@ namespace Servicios
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>();
-            //transformar el resultado de la logica de negocios a la clase de contratos
-            return new Grilla<Padre>()
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resul.EsValido)
             {
-                Lista = AutoMapper.Instancia.ConvertirLista<LogicaPadre, Padre>(lista)
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = lista.Count()
-            };
+                List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>();
+                //transformar el resultado de la logica de negocios a la clase de contratos
+                return new Grilla<Padre>()
+                {
+                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaPadre, Padre>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                    CantidadRegistros = lista.Count()
+                };
+            }
+            else
+            {
+                return new Grilla<Padre>();
+            }
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)

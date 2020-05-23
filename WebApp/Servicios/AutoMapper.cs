@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Contratos;
-using Lógica_de_Negocios;
-using System;
+using LogicaDeNegocios;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios
 {

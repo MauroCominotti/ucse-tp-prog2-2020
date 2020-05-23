@@ -1,6 +1,7 @@
 ﻿using Contratos;
 using Mocks;
 using Newtonsoft.Json;
+using Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,12 @@ namespace WebApp.Controllers
     {
         public static IServicioWeb CreateService(bool realService = false)
         {
-            return new MockService(); //TODO > Cambiar por el servicio real.  realService ? new RealService() : new MockService();          
+            if (realService)
+                return new GeneralService();
+            else
+                return new MockService();
+            /*return realService ? new GeneralService() : new MockService();*/ 
+            //TODO > Cambiar por el servicio real.  realService ? new RealService() : new MockService(); (no funciona el operador ternario)         
         }
 
         protected UsuarioLogueado usuarioLogueado;
