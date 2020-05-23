@@ -60,9 +60,9 @@
       <Project>{AFEE4439-32EF-4973-B607-8432A2473F2E}</Project>
       <Name>Contratos</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lógica de Negocios\Lógica de Negocios.csproj">
+    <ProjectReference Include="..\Lógica de Negocios\LogicaDeNegocios.csproj">
       <Project>{195d9f24-20ae-43fb-8509-dd62d3a7a898}</Project>
-      <Name>Lógica de Negocios</Name>
+      <Name>LogicaDeNegocios</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,7 @@ namespace Lógica_de_Negocios
     {
         public static bool RegistroUsuario(string email) //Para ver si ya se logueo anteriormente
         {
-            List<LogicaUsuario> Usuarios = Archivo.Instancia.LeerUsuarios();
+            List<LogicaUsuario> Usuarios = Archivo.Instancia.Leer<LogicaUsuario>();
             if (Usuarios != null)
             {
                 LogicaUsuario us = Usuarios.Where(x => x.Email == email).FirstOrDefault();

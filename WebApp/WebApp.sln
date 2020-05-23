@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contratos", "Contratos\Cont
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocks", "Mocks\Mocks.csproj", "{C71DB83D-C94E-46AF-8579-B3DFFE048A6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lógica de Negocios", "Lógica de Negocios\Lógica de Negocios.csproj", "{195D9F24-20AE-43FB-8509-DD62D3A7A898}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicaDeNegocios", "Lógica de Negocios\LogicaDeNegocios.csproj", "{195D9F24-20AE-43FB-8509-DD62D3A7A898}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicios", "Servicios\Servicios.csproj", "{8E5172CE-0749-475E-AD97-655EB1AD71DE}"
 EndProject
