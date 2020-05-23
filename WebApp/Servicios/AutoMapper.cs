@@ -28,7 +28,8 @@ namespace Servicios
         //https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-methods
         //https://stackoverflow.com/questions/2690623/what-is-the-dynamic-type-in-c-sharp-4-0-used-for
 
-        // Ejemplo para usar la funcion ==> Mappear<T,U> (LogicaDirectora x, new Directora())
+        // LogicaDirectora directora = new LogicaDirectora();
+        // Ejemplo para usar la funcion ==> Mappear<LogicaDirectora, Directora> (directora);
         public Destination Mapear<Source, Destination>(Source source)
         {
             var config = new MapperConfiguration(cfg => {
