@@ -29,7 +29,7 @@ namespace Servicios
         //https://stackoverflow.com/questions/2690623/what-is-the-dynamic-type-in-c-sharp-4-0-used-for
 
         // Ejemplo para usar la funcion ==> Mappear<T,U> (LogicaDirectora x, new Directora())
-        public dynamic Mapear<T, D>(T source, D dest)
+        public Destination Mapear<Source, Destination>(Source source)
         {
             var config = new MapperConfiguration(cfg => {
                 cfg.CreateMap<LogicaDirectora, Directora>();
@@ -42,27 +42,13 @@ namespace Servicios
                 cfg.CreateMap<LogicaComentario, Comentario>();
             });
             config.AssertConfigurationIsValid();
-            return new Mapper(config).Map<D>(source); 
+            return new Mapper(config).Map<Destination>(source);
         }
-        //public dynamic Mapear<T,D> (T source, D dest)
-        //{
-        //    var config = new MapperConfiguration(cfg => cfg.CreateMap<T, D>());
-        //    //var mapper = new Mapper(config);
-        //    //dest = mapper.Map<D>(source);
-        //    dest = new Mapper(config).Map<D>(source);
-        //    return dest;
-        //}
-
-
         // Automappear Lista //////////////////////////////////////////////////////////////////////////////
-        public List<U> ConvertirLista<T, U>(List<T> lista, U args)
+        public List<Destination> ConvertirLista<Source, Destination>(List<Source> lista)
         {
-            List<U> resultado = new List<U>();
-            foreach (var elem in lista)
-            {
-                resultado.Add(Mapear(elem, args));
-            }
-            return resultado;
+            List<Destination> resultado = new List<Destination>();
+            return lista.Select(x => Mapear<Source, Destination>(x)).ToList();
         }
 
     }

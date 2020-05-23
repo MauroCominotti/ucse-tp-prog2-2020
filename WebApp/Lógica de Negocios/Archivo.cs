@@ -22,8 +22,8 @@ namespace Lógica_de_Negocios
         private const string registros = @"registros.txt";
         private const string notas = @"notas.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory;//Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-
-        //SINGLETON---------------------------------------------
+        private string[] arrayRutas = { directoras, usuarios, padres, hijos, docentes, salas, registros, notas }; 
+        //SINGLETON //////////////////////////////////////////////////////////////////////////////
         private static Archivo instancia = null;
         public static Archivo Instancia
         {
@@ -35,61 +35,42 @@ namespace Lógica_de_Negocios
             }
         }
 
-        //Buscar en Archivos----------------------------------------------------------
-        public List<LogicaUsuario> LeerUsuario()
+        public static List<T> VerificarExistencia <T>(string r, T obj)
         {
-            List<LogicaUsuario> listusu = new List<LogicaUsuario>();
-            ruta = Path.Combine(carpeta, usuarios);
-            using (StreamReader re = new StreamReader(ruta))
-            {
-                string text = re.ReadToEnd();
-                listusu = JsonConvert.DeserializeObject<List<LogicaUsuario>>(text);
-            }
-            return listusu;
+            File.Create(r);
+            List<T> lista = new List<T>();
+            return lista;
         }
 
-        public List<Registros> LeerRegistros()
+        //Buscar en Archivos //////////////////////////////////////////////////////////////////////////////
+        public List<T> Leer<T>()
         {
-            List<Registros> reg = new List<Registros>();
-            ruta = Path.Combine(carpeta, registros);
-            using (StreamReader re = new StreamReader(ruta))
+            // c# inferencia de tipo en metodo generico
+            List<T> listusu = new List<T>();
+            string rutaSeleccionada = arrayRutas.First(x => x == typeof(T).Name);
+            ruta = Path.Combine(carpeta, rutaSeleccionada);
+            if (!File.Exists(ruta))
             {
-                string text = re.ReadToEnd();
-                reg = JsonConvert.DeserializeObject<List<Registros>>(text);
+                File.Create(ruta);
+                List<T> lista = new List<T>();
+                return lista;
             }
-            return reg;
-        }
-
-        public List<LogicaDirectora> LeerDirectoras()
-        {
-            List<LogicaDirectora> listdir = new List<LogicaDirectora>();
-            ruta = Path.Combine(carpeta, directoras);
-            using (StreamReader re = new StreamReader(ruta))
+            else
             {
-                string text = re.ReadToEnd();
-                listdir = JsonConvert.DeserializeObject<List<LogicaDirectora>>(text);
+                using (StreamReader re = new StreamReader(ruta))
+                {
+                    string text = re.ReadToEnd();
+                    listusu = JsonConvert.DeserializeObject<List<T>>(text);
+                }
+                return listusu;
             }
-            return listdir;
         }
-
-        public List<LogicaHijo> LeerAlumnos()
-        {
-            List<LogicaHijo> listalum = new List<LogicaHijo>();
-            ruta = Path.Combine(carpeta, hijos);
-            using (StreamReader re = new StreamReader(ruta))
-            {
-                string json = re.ReadToEnd();
-                listalum = JsonConvert.DeserializeObject<List<LogicaHijo>>(json);
-            }
-            return listalum;
-        }
-
-        //Guardar en archivos----------------------------------------------------
+        //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
         public void Guardar(Registros reg, bool suprimir)
         {
             string rutas = Path.Combine(carpeta, registros);
             List<Registros> listreg = new List<Registros>();
-            listreg = LeerRegistros();
+            listreg = Leer<Registros>();
             if (listreg != null)
             {
                 int cont = 0; bool br = true;
@@ -129,7 +110,7 @@ namespace Lógica_de_Negocios
         {
             string rutas = Path.Combine(carpeta, directoras);
             List<LogicaDirectora> listreg = new List<LogicaDirectora>();
-            listreg = LeerDirectoras();
+            listreg = Leer<LogicaDirectora>();
             int cont = 0; bool br = true;
             if (listreg != null)
             {
@@ -169,7 +150,7 @@ namespace Lógica_de_Negocios
 
             string rutas = Path.Combine(carpeta, usuarios);
             List<LogicaUsuario> listusu = new List<LogicaUsuario>();
-            listusu = LeerUsuario();
+            listusu = Leer<LogicaUsuario>();
             int cont = 0; bool br = true;
             if (listusu != null)
             {
@@ -209,7 +190,7 @@ namespace Lógica_de_Negocios
         {
             string rutas = Path.Combine(carpeta, hijos);
             List<LogicaHijo> listalum = new List<LogicaHijo>();
-            listalum = LeerAlumnos();
+            listalum = Leer<LogicaHijo>();
             int cont = 0; bool br = true;
             if (listalum != null)
             {

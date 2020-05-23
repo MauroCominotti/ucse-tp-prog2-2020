@@ -67,7 +67,7 @@ namespace UnitTestProject1
             List<Directora> resultado = new List<Directora>();
             foreach (var elem in lista)
             {
-                resultado.Add(AutoMapper.Instancia.Mapear(elem, new Directora()));
+                resultado.Add(AutoMapper.Instancia.Mapear<LogicaDirectora, Directora>(elem));
             }
 
             Assert.AreEqual("Roberta", resultado[0].Nombre);
