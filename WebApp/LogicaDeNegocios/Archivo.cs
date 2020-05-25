@@ -10,16 +10,16 @@ namespace LogicaDeNegocios
     {
         //Carpeta , archivos y ruta
         private string ruta;
-        private const string directoras = @"directoras.txt";
-        private const string usuarios = @"usuarios.txt";
-        private const string padres = @"padres.txt";
-        private const string hijos = @"hijos.txt";
-        private const string docentes = @"docentes.txt";
-        private const string salas = @"salas.txt";
-        private const string registros = @"registros.txt";
-        private const string notas = @"notas.txt";
+        private const string LogicaDirectora = @"directoras.txt"; // TODO > YA HECHO - cambiar nombre de prop para que coincidan con las clases
+        private const string LogicaUsuario = @"usuarios.txt";
+        private const string LogicaPadre = @"padres.txt";
+        private const string LogicaHijo = @"hijos.txt";
+        private const string LogicaDocente = @"docentes.txt";
+        private const string LogicaSala = @"salas.txt";
+        private const string Registros = @"registros.txt";
+        private const string LogicaNota = @"notas.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory;//Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-        private string[] arrayRutas = { directoras, usuarios, padres, hijos, docentes, salas, registros, notas }; 
+        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, Registros, LogicaNota }; 
 
         // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace LogicaDeNegocios
         //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
         public void Guardar(Registros reg, bool suprimir)
         {
-            string rutas = Path.Combine(carpeta, registros);
+            string rutas = Path.Combine(carpeta, Registros);
             List<Registros> listreg = new List<Registros>();
             listreg = Leer<Registros>();
             if (listreg != null)
@@ -108,7 +108,7 @@ namespace LogicaDeNegocios
 
         public void Guardar(LogicaDirectora directivo, bool suprimir)
         {
-            string rutas = Path.Combine(carpeta, directoras);
+            string rutas = Path.Combine(carpeta, LogicaDirectora);
             List<LogicaDirectora> listreg = new List<LogicaDirectora>();
             listreg = Leer<LogicaDirectora>();
             int cont = 0; bool br = true;
@@ -148,7 +148,7 @@ namespace LogicaDeNegocios
         public void Guardar(LogicaUsuario usu, bool suprimir)
         {
 
-            string rutas = Path.Combine(carpeta, usuarios);
+            string rutas = Path.Combine(carpeta, LogicaUsuario);
             List<LogicaUsuario> listusu = new List<LogicaUsuario>();
             listusu = Leer<LogicaUsuario>();
             int cont = 0; bool br = true;
@@ -188,7 +188,7 @@ namespace LogicaDeNegocios
 
         public void Guardar(LogicaHijo alumno, bool suprimir)
         {
-            string rutas = Path.Combine(carpeta, hijos);
+            string rutas = Path.Combine(carpeta, LogicaHijo);
             List<LogicaHijo> listalum = new List<LogicaHijo>();
             listalum = Leer<LogicaHijo>();
             int cont = 0; bool br = true;

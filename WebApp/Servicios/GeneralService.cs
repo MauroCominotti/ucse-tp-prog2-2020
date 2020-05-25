@@ -73,19 +73,32 @@ namespace Servicios
             return ress;
         }
 
-        public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
+        public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado) 
         {
+            // TODO > Corregir todos los casos 1) agg resul error 403 - 2) error si ya se encuentra - 3) no hubo error al leer
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
             List<LogicaDocente> Docente = Archivo.Instancia.Leer<LogicaDocente>();
-            if (Docente != null || Docente.Count() > 0)
-                docente.Id = Docente.LastOrDefault().Id + 1;
+            if (Docente != null) // no hubo ningun error al leer, puede ser q sea una lista vacia
+            {
+                if (Docente.Count() == 0)
+                    docente.Id = 1;
+                else
+                    docente.Id = Docente.LastOrDefault().Id + 1;
+            }
             else
                 resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
             if (resul.EsValido)
             {
-                var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
-                Archivo.Instancia.Guardar(docenteCasteado, false);
+                if (Docente.Find(x=> x.Id == docente.Id) == null)
+                    resul.Errores.Add("Error 404: Docente ya se encuentra en la base de datos.");
+                else
+                {
+                    var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                    Archivo.Instancia.Guardar(docenteCasteado, false);
+                }
             }
+            else
+                resul.Errores.Add("Error 403: Docente no tiene los permisos suficientes.");
             return resul;
         }
 
