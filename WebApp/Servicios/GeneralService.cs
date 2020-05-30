@@ -172,7 +172,35 @@ namespace Servicios
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resultado.EsValido)
+            {
+                List<LogicaPadre> padres = Archivo.Instancia.Leer<LogicaPadre>();
+                if (padres != null)
+                {
+                    foreach (var item in padres)
+                    {
+                        LogicaHijo hije = item.Hijos.Where(x => x.Id == id).FirstOrDefault();
+                        if (hije != null)
+                        {
+                            List<LogicaHijo> hijos = item.Hijos.ToList();
+                            hijos.Remove(hije);
+                            var hijo1 = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
+                            hijos.Add(hijo1);
+                            item.Hijos = hijos.ToArray();
+                            Archivo.Instancia.Guardar(item, false);
+                        }
+                    }
+                    var hijoo = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
+                    Archivo.Instancia.Guardar(hijoo, false);
+                }
+                else
+                {
+                    var hijo2 = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
+                    Archivo.Instancia.Guardar(hijo2, false);
+                }
+            }
+            return resultado;
         }
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
