@@ -130,7 +130,29 @@ namespace Servicios
 
         public Resultado AsignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado nuevardo = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (nuevardo.EsValido)
+            {
+                if (docente.Salas == null)
+                {
+                    docente.Salas = new Sala[] { sala };
+                    var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                    Archivo.Instancia.Guardar(docenteCasteado, false);
+                }
+                else
+                {
+                    List<Sala> listsalas = docente.Salas.ToList();
+                    Sala salaasig = listsalas.Where(x => x.Id == sala.Id).FirstOrDefault();
+                    if (salaasig == null)
+                    {
+                        listsalas.Add(sala);
+                        docente.Salas = listsalas.ToArray();
+                        var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                        Archivo.Instancia.Guardar(docenteCasteado, false);
+                    }
+                }
+            }
+            return nuevardo;
         }
 
         public Resultado AsignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)

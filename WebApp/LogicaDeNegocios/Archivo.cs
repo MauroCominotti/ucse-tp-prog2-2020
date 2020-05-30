@@ -106,6 +106,49 @@ namespace LogicaDeNegocios
         }
 
 
+        public void Guardar(LogicaDocente doc, bool suprimir)
+        {
+            string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
+            List<LogicaDocente> listdoc = new List<LogicaDocente>();
+            listdoc = Leer<LogicaDocente>();
+            int cont = 0; bool ban = true;
+            if (listdoc != null)
+            {
+                foreach (var item in listdoc)
+                {
+                    if (item.Id == doc.Id)
+                    {
+                        if (suprimir)
+                        {
+                            listdoc.RemoveAt(cont);
+                        }
+                        else
+                        {
+                            listdoc.RemoveAt(cont);
+                            listdoc.Insert(cont, doc);
+                        }
+                        ban = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (ban)
+                    listdoc.Add(doc);
+            }
+            else
+            {
+                listdoc = new List<LogicaDocente>();
+                listdoc.Add(doc);
+            }
+
+            using (StreamWriter escribir = new StreamWriter(rutaarchivo, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listdoc);
+                escribir.Write(Serializar);
+            }
+        }
+
+
         public void Guardar(LogicaDirectora directivo, bool suprimir)
         {
             string rutas = Path.Combine(carpeta, LogicaDirectora);
