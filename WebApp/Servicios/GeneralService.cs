@@ -305,7 +305,9 @@ namespace Servicios
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            LogicaHijo alumno = Archivo.Instancia.Leer<LogicaHijo>().Where(x => x.Id == id).FirstOrDefault();
+            var alumnoo = AutoMapper.Instancia.Mapear<LogicaHijo, Hijo>(alumno);
+            return alumnoo;
         }
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -336,7 +338,10 @@ namespace Servicios
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+
+            LogicaDirectora directora = Archivo.Instancia.Leer<LogicaDirectora>().Where(x => x.Id == id).FirstOrDefault();
+            var directoraa = AutoMapper.Instancia.Mapear<LogicaDirectora, Directora>(directora);
+            return directoraa;
         }
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -362,7 +367,11 @@ namespace Servicios
 
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+
+            LogicaDocente docente = Archivo.Instancia.Leer<LogicaDocente>().Where(x => x.Id == id).FirstOrDefault();
+            var docentee = AutoMapper.Instancia.Mapear<LogicaDocente, Docente>(docente);
+            return docentee;
+
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -402,7 +411,9 @@ namespace Servicios
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            LogicaPadre padre = Archivo.Instancia.Leer<LogicaPadre>().Where(x => x.Id == id).FirstOrDefault();
+            var padree = AutoMapper.Instancia.Mapear<LogicaPadre, Padre>(padre);
+            return padree;
         }
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -433,7 +444,30 @@ namespace Servicios
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                List<LogicaSala> salas = Archivo.Instancia.Leer<LogicaSala>();
+                if (salas == null)
+                    return new Sala[0];
+                else
+                {
+                    var salaas = AutoMapper.Instancia.Mapear< List<LogicaSala>, List<Sala> >(salas);
+                    return salaas.ToArray();
+                }
+            }
+            else
+            {
+                if (usuarioLogueado.RolSeleccionado == Roles.Docente)
+                {
+                    LogicaDocente docent = Archivo.Instancia.Leer<LogicaDocente>().Where(x => x.Nombre == usuarioLogueado.Nombre && x.Apellido == usuarioLogueado.Apellido &&
+                        x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    List<LogicaSala> listasalas = docent.Salas.ToList();
+                    var listasalass = AutoMapper.Instancia.Mapear<List<LogicaSala>, List<Sala>>(listasalas);
+                    return listasalass.ToArray();
+                }
+                else
+                    return null;
+            }
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
