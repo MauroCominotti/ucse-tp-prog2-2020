@@ -157,12 +157,18 @@ namespace Servicios
 
         public Resultado AsignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            //El usuario debe ser directora, y el hijo debe estar asociado a una sala de su institucion
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resultado.EsValido)
+            {
+
+            }
+            return resultado;
         }
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return null; 
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
@@ -205,17 +211,86 @@ namespace Servicios
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+
+            if (resultado.EsValido)
+            {
+                var directoraMapeada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora); 
+                var directoras = Archivo.Instancia.Leer<LogicaDirectora>();
+                var directoraEncontrada = directoras.Find(dir => dir.Id == id);
+                if (directoraEncontrada != null)
+                {
+                    directoraEncontrada.Eliminado = true;
+                    Archivo.Instancia.Guardar(directoraEncontrada, false);
+                    Archivo.Instancia.Guardar(directoraMapeada, false);
+                }
+                else
+                {
+                    resultado.Errores.Add("No existe la directora");
+                }
+            }
+            else
+            {
+                resultado.Errores.Add("No tiene permisos");
+            }
+
+            return resultado;
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+
+            if (resultado.EsValido)
+            {
+                var docenteMapeada = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                var docentes = Archivo.Instancia.Leer<LogicaDirectora>();
+                var docenteEncontrada = docentes.Find(x => x.Id == id);
+                if (docenteEncontrada != null)
+                {
+                    docenteEncontrada.Eliminado = true;
+                    Archivo.Instancia.Guardar(docenteEncontrada, false);
+                    Archivo.Instancia.Guardar(docenteMapeada, false);
+                }
+                else
+                {
+                    resultado.Errores.Add("no existe directora");
+                }
+            }
+            else
+            {
+                resultado.Errores.Add("no tenes permisos");
+            }
+
+            return resultado;
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+
+            if (resultado.EsValido)
+            {
+                var padreMapeado = AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(padre);
+                var padres = Archivo.Instancia.Leer<LogicaPadre>();
+                var padreEncontrado = padres.Find(x => x.Id == id);
+                if (padreEncontrado != null)
+                {
+                    padreEncontrado.Eliminado = true;
+                    Archivo.Instancia.Guardar(padreEncontrado, true);
+                    Archivo.Instancia.Guardar(padreMapeado, true);
+                }
+                else
+                {
+                    resultado.Errores.Add("no existe padre");
+                }
+            }
+            else
+            {
+                resultado.Errores.Add("no tenes permisos");
+            }
+
+            return resultado;
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
