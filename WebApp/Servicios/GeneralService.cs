@@ -375,7 +375,16 @@ namespace Servicios
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            var resultado = new Resultado();
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
+            {
+                nota.Leida = true;
+            }
+            else
+            {
+                resultado.Errores.Add("No tiene permisos");
+            }
+            return resultado;
         }
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
@@ -408,7 +417,46 @@ namespace Servicios
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            List<Nota> notas = new List<Nota>();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                var directora = Archivo.Instancia.Leer<LogicaDirectora>().Find(x => x.Id == idPersona);
+                var alumnos = Archivo.Instancia.Leer<LogicaHijo>().FindAll(alm => alm.Institucion == directora.Institucion);
+                foreach (var alumno in alumnos)
+                {
+                    var notasALM = alumno.Notas.ToList();
+                    var notasMapeadas = AutoMapper.Instancia.ConvertirLista<LogicaNota, Nota>(notasALM);
+                    notas.AddRange(notasMapeadas);
+                }
+                
+            }
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente)
+            {
+                var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Id == idPersona);
+                var salasDocente = docente.Salas.ToList();
+                var alumnosDocente = Archivo.Instancia.Leer<LogicaHijo>().
+                    FindAll(alm => salasDocente.Exists(sala => sala.Id == alm.Sala.Id)); //ver si funciona
+                
+                foreach (var alumno in alumnosDocente)
+                {
+                    var notasALM = alumno.Notas.ToList();
+                    var notasMapeadas = AutoMapper.Instancia.ConvertirLista<LogicaNota, Nota>(notasALM);
+                    notas.AddRange(notasMapeadas);
+                }
+                
+            }
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
+            {
+                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == idPersona);
+                foreach (var hijo in padre.Hijos)
+                {
+                    var notasALM = hijo.Notas.ToList();
+                    var notasMapeadas = AutoMapper.Instancia.ConvertirLista<LogicaNota, Nota>(notasALM);
+                    notas.AddRange(notasMapeadas);
+                }
+            }
+
+            return notas.ToArray();
         }
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
