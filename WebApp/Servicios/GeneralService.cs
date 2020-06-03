@@ -220,12 +220,36 @@ namespace Servicios
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            return null; 
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resultado.EsValido)
+            {
+                var docenteLogica = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Id == docente.Id);
+                docenteLogica.Salas.ToList().RemoveAll(x => x.Id == sala.Id);
+                Archivo.Instancia.Guardar(docenteLogica, false);
+            }
+            else
+            {
+                resultado.Errores.Add("No tiene permisos");
+            }
+
+            return resultado;
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resultado.EsValido)
+            {
+                var padreLogica = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == padre.Id);
+                padreLogica.Hijos.ToList().RemoveAll(hij => hij.Id == hijo.Id);
+                Archivo.Instancia.Guardar(padreLogica, false);
+            }
+            else
+            {
+                resultado.Errores.Add("No tiene persisos");
+            }
+
+            return resultado;
         }
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
