@@ -33,6 +33,13 @@ namespace LogicaDeNegocios
             }
             return result;
         } 
+
+        public static Boolean MismaInstitucion(int Id, string Email) // toma un docente, alumno, etc,(Id) y un usuario(Email)
+        {
+            string institucionAComparar = Archivo.Instancia.Leer<Registros>().First(x => x.Id == Id).Institucion.Nombre;
+            string institucionDelUsuario = Archivo.Instancia.Leer<Registros>().First(x => x.Email == Email).Institucion.Nombre;
+            return institucionAComparar == institucionDelUsuario;
+        }
     }
     
 }

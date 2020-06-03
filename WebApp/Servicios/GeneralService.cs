@@ -10,7 +10,7 @@ namespace Servicios
     {
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado); // TODO > Cambie resul de lugar porque sino se sobreescribe al ponerlo al final
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
             List<LogicaHijo> Alumno = Archivo.Instancia.Leer<LogicaHijo>();
             if (Alumno != null || Alumno.Count() > 0)
                 hijo.Id = Alumno.LastOrDefault().Id + 1;
@@ -73,7 +73,7 @@ namespace Servicios
             return ress;
         }
 
-        public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado) 
+        public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
             // TODO > Corregir todos los casos 1) agg resul error 403 - 2) error si ya se encuentra - 3) no hubo error al leer
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
@@ -89,7 +89,7 @@ namespace Servicios
                 resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
             if (resul.EsValido)
             {
-                if (Docente.Find(x=> x.Id == docente.Id) == null)
+                if (Docente.Find(x => x.Id == docente.Id) == null)
                     resul.Errores.Add("Error 404: Docente ya se encuentra en la base de datos.");
                 else
                 {
@@ -142,7 +142,7 @@ namespace Servicios
                     alumno.Notas.ToList().Add(notaMap);
                     Archivo.Instancia.Guardar(alumno, false);
                 }
-                
+
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
@@ -155,7 +155,7 @@ namespace Servicios
                     hijo.Notas.ToList().Add(notaMap);
                     Archivo.Instancia.Guardar(padre, false);
                 }
-                
+
 
 
             }
@@ -213,19 +213,38 @@ namespace Servicios
             var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
             if (resultado.EsValido)
             {
-
+                // TODO > Falta esta funcion.
             }
             return resultado;
         }
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            return null; 
+            Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado);
+            if (resul.EsValido)
+            {
+                List<LogicaDirectora> Directora = Archivo.Instancia.Leer<LogicaDirectora>();
+                if (Directora != null && Directora.Count() != 0 && Directora.Find(x => x.Email == usuarioLogueado.Email) != null)
+                {
+                    if (Empresa.MismaInstitucion(docente.Id, usuarioLogueado.Email))
+                    {
+                        docente.Salas.ToList().Remove(sala);
+                        Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente));
+                    }
+                    else
+                        resul.Errores.Add("Error 403: Directora no pertenece a la misma institucion.");
+                }
+                else
+                    resul.Errores.Add("Error 404: Directora no encontrada en la base de datos.");
+            }
+            else
+                resul.Errores.Add("Error 403: El usuario no tiene los permisos suficientes.");
+            return resul;
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // TODO > Falta esta funcion.
         }
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
@@ -267,7 +286,7 @@ namespace Servicios
 
             if (resultado.EsValido)
             {
-                var directoraMapeada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora); 
+                var directoraMapeada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
                 var directoras = Archivo.Instancia.Leer<LogicaDirectora>();
                 var directoraEncontrada = directoras.Find(dir => dir.Id == id);
                 if (directoraEncontrada != null)
@@ -430,7 +449,7 @@ namespace Servicios
             var resultado = new Resultado();
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
-                nota.Leida = true;
+                nota.Leida = true; // TODO > no se actualiza la tabla en realidad
             }
             else
             {
@@ -480,7 +499,7 @@ namespace Servicios
                     var notasMapeadas = AutoMapper.Instancia.ConvertirLista<LogicaNota, Nota>(notasALM);
                     notas.AddRange(notasMapeadas);
                 }
-                
+
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Docente)
             {
@@ -488,14 +507,14 @@ namespace Servicios
                 var salasDocente = docente.Salas.ToList();
                 var alumnosDocente = Archivo.Instancia.Leer<LogicaHijo>().
                     FindAll(alm => salasDocente.Exists(sala => sala.Id == alm.Sala.Id)); //ver si funciona
-                
+
                 foreach (var alumno in alumnosDocente)
                 {
                     var notasALM = alumno.Notas.ToList();
                     var notasMapeadas = AutoMapper.Instancia.ConvertirLista<LogicaNota, Nota>(notasALM);
                     notas.AddRange(notasMapeadas);
                 }
-                
+
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
@@ -614,7 +633,7 @@ namespace Servicios
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();// TODO > Falta esta funcion.
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
@@ -626,7 +645,7 @@ namespace Servicios
                     return new Sala[0];
                 else
                 {
-                    var salaas = AutoMapper.Instancia.Mapear< List<LogicaSala>, List<Sala> >(salas);
+                    var salaas = AutoMapper.Instancia.Mapear<List<LogicaSala>, List<Sala>>(salas);
                     return salaas.ToArray();
                 }
             }
@@ -647,12 +666,12 @@ namespace Servicios
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();// TODO > Falta esta funcion.
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();// TODO > Falta esta funcion.
         }
     }
 }

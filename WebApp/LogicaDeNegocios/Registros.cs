@@ -13,5 +13,6 @@ namespace LogicaDeNegocios
         public string Password { get; set; }
         public string Email { get; set; }
         public Roles[] Roles { get; set; }
+        public LogicaInstitucion Institucion { get; set; }
     }
 }

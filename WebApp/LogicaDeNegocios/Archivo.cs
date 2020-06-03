@@ -79,7 +79,7 @@ namespace LogicaDeNegocios
                     if (item.Id == reg.Id)
                     {
                         if (suprimir)
-                            listreg.RemoveAt(cont); // TODO > LA ELIMINACION TENDRIA Q SER UNA ELMINACION LOGICA!!!
+                            listreg.RemoveAt(cont); // TODO > LA ELIMINACION TENDRIA Q SER UNA ELMINACION LOGICA!!! preguntar maxi registros duplicados
                         else
                         {
                             listreg.RemoveAt(cont);
@@ -106,7 +106,7 @@ namespace LogicaDeNegocios
         }
 
 
-        public void Guardar(LogicaDocente doc, bool suprimir)
+        public void Guardar(LogicaDocente doc, bool suprimir = false)
         {
             string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
             List<LogicaDocente> listdoc = new List<LogicaDocente>();
