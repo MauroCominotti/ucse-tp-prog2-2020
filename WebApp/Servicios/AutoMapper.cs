@@ -27,18 +27,30 @@ namespace Servicios
 
         // LogicaDirectora directora = new LogicaDirectora();
         // Ejemplo para usar la funcion ==> Mappear<LogicaDirectora, Directora> (directora);
+        // correccion para mapear solo algunas propiedades https://stackoverflow.com/questions/954480/automapper-ignore-the-rest/31182390#31182390
         public Destination Mapear<Source, Destination>(Source source)
         {
             var config = new MapperConfiguration(cfg => {
-                cfg.CreateMap<LogicaDirectora, Directora>();
-                cfg.CreateMap<Registros, UsuarioLogueado>();
-                cfg.CreateMap<LogicaInstitucion, Institucion>();
+                cfg.CreateMap<LogicaDirectora, Directora>(MemberList.Destination);
+                cfg.CreateMap<Directora, LogicaDirectora>(MemberList.Source);
+                cfg.CreateMap<LogicaDocente, Docente>(MemberList.Destination);
+                cfg.CreateMap<Docente, LogicaDocente>(MemberList.Source);
+                cfg.CreateMap<LogicaUsuario, UsuarioLogueado>(MemberList.Destination);
+                cfg.CreateMap<UsuarioLogueado, LogicaUsuario>(MemberList.Source);
+                cfg.CreateMap<LogicaInstitucion, Institucion>(MemberList.Destination);
+                cfg.CreateMap<Institucion, LogicaInstitucion>(MemberList.Source);
                 cfg.CreateMap<LogicaSala, Sala>();
-                cfg.CreateMap<LogicaUsuario, Usuario>();
-                cfg.CreateMap<LogicaPadre, Padre>();
-                cfg.CreateMap<LogicaHijo, Hijo>();
+                cfg.CreateMap<Sala, LogicaSala>();
+                cfg.CreateMap<LogicaUsuario, Usuario>(MemberList.Destination);
+                cfg.CreateMap<Usuario, LogicaUsuario>(MemberList.Source); // solo los campos de Source son mapeados
+                cfg.CreateMap<LogicaPadre, Padre>(MemberList.Destination);
+                cfg.CreateMap<Padre, LogicaPadre>(MemberList.Source);
+                cfg.CreateMap<LogicaHijo, Hijo>(MemberList.Destination);
+                cfg.CreateMap<Hijo, LogicaHijo>(MemberList.Source);
                 cfg.CreateMap<LogicaNota, Nota>();
+                cfg.CreateMap<Nota, LogicaNota>();
                 cfg.CreateMap<LogicaComentario, Comentario>();
+                cfg.CreateMap<Comentario, LogicaComentario>();
             });
             config.AssertConfigurationIsValid();
             return new Mapper(config).Map<Destination>(source);

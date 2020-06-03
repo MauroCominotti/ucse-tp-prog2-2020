@@ -20,7 +20,7 @@ namespace WebApp.Grid
                 NoResultsMessage = "No hay mas usuarios para mostrar",
                 NextButtonCaption = string.Empty,
                 PreviousButtonCaption = string.Empty,
-                SummaryMessage = "Viendo {0} a {1} de {2} registros"
+                SummaryMessage = "Viendo {0} a {1} de {2} LogicaUsuario"
             };
 
             MVCGridDefinitionTable.Add("PadresGrid", new MVCGridBuilder<Padre>(employeeGridDefauls)
@@ -59,7 +59,7 @@ namespace WebApp.Grid
                       return new QueryResult<Padre>()
                       {
                           Items = data.Lista.ToArray(),
-                          TotalRecords = data.CantidadRegistros,
+                          TotalRecords = data.CantidadLogicaUsuario,
                       };
 
                   })

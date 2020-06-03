@@ -1,0 +1,1 @@
+[{"Id":2,"Nombre":"Misericordia","Direccion":"Cosettini 403","Telefono":"03492565890","Ciudad":"Rafaela","Provincia":"Santa Fe","Eliminado":false}]

@@ -10,16 +10,16 @@ namespace LogicaDeNegocios
     {
         //Carpeta , archivos y ruta
         private string ruta;
-        private const string LogicaDirectora = @"directoras.txt"; // TODO > YA HECHO - cambiar nombre de prop para que coincidan con las clases
-        private const string LogicaUsuario = @"usuarios.txt";
-        private const string LogicaPadre = @"padres.txt";
-        private const string LogicaHijo = @"hijos.txt";
-        private const string LogicaDocente = @"docentes.txt";
-        private const string LogicaSala = @"salas.txt";
-        private const string Registros = @"registros.txt";
-        private const string LogicaNota = @"notas.txt";
-        private string carpeta = AppDomain.CurrentDomain.BaseDirectory;//Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, Registros, LogicaNota };
+        private const string LogicaDirectora = @"LogicaDirectora.txt";
+        private const string LogicaUsuario = @"LogicaUsuario.txt";
+        private const string LogicaPadre = @"LogicaPadre.txt";
+        private const string LogicaHijo = @"LogicaHijo.txt";
+        private const string LogicaDocente = @"LogicaDocente.txt";
+        private const string LogicaSala = @"LogicaSala.txt";
+        private const string LogicaNota = @"LogicaNota.txt";
+        private const string LogicaInstitucion = @"LogicaInstitucion.txt";
+        private string carpeta = AppDomain.CurrentDomain.BaseDirectory; //Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
+        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, LogicaNota };
 
         // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
@@ -34,24 +34,18 @@ namespace LogicaDeNegocios
             }
         }
 
-        public static List<T> VerificarExistencia<T>(string r, T obj)
-        {
-            File.Create(r);
-            List<T> lista = new List<T>();
-            return lista;
-        }
-
         //Buscar en Archivos //////////////////////////////////////////////////////////////////////////////
         public List<T> Leer<T>()
         {
             // c# inferencia de tipo en metodo generico
             // https://sodocumentation.net/es/csharp/topic/27/genericos
             List<T> listusu = new List<T>();
-            string rutaSeleccionada = arrayRutas.First(x => x == typeof(T).Name);
+            string rutaSeleccionada = arrayRutas.First(x => x.Contains(typeof(T).Name));
             ruta = Path.Combine(carpeta, rutaSeleccionada);
             if (!File.Exists(ruta))
             {
-                File.Create(ruta);
+                var file = File.Create(ruta);
+                file.Close();
                 List<T> lista = new List<T>();
                 return lista;
             }
@@ -65,25 +59,87 @@ namespace LogicaDeNegocios
                 return listusu;
             }
         }
-        //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
-        public void Guardar(Registros reg, bool suprimir = false)
+
+
+        public void ObtenerListaGeneral() // TODO > Actualiza la lista de Usuarios
         {
-            string rutas = Path.Combine(carpeta, Registros);
-            List<Registros> listreg = new List<Registros>();
-            listreg = Leer<Registros>();
-            if (listreg != null)
+            List<LogicaUsuario> usuarios = new List<LogicaUsuario>();
+            var listadir = Leer<LogicaDirectora>();
+            var listadoc = Leer<LogicaDocente>();
+            var listadpadre = Leer<LogicaPadre>();
+            var listahijo = Leer<LogicaHijo>();
+            if (listadir != null)
+                usuarios.AddRange(listadir.Select(x => x as LogicaUsuario));
+            if (listadoc != null)
+                usuarios.AddRange(listadoc.Select(x => x as LogicaUsuario));
+            if (listadpadre != null)
+                usuarios.AddRange(listadir.Select(x => x as LogicaUsuario));
+            if (listahijo != null)
+                usuarios.AddRange(listahijo.Select(x => x as LogicaUsuario));
+            
+            usuarios.ForEach(x => Guardar(x));
+        }
+
+        //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
+        public void Guardar(LogicaInstitucion institucion, bool suprimir = false)
+        {
+            string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
+            List<LogicaInstitucion> listinstitucion = new List<LogicaInstitucion>();
+            listinstitucion = Leer<LogicaInstitucion>();
+            int cont = 0; bool ban = true;
+            if (listinstitucion != null)
             {
-                int cont = 0; bool br = true;
-                foreach (var item in listreg)
+                foreach (var item in listinstitucion)
                 {
-                    if (item.Id == reg.Id)
+                    if (item.Id == institucion.Id)
                     {
                         if (suprimir)
-                            listreg.RemoveAt(cont); // TODO > LA ELIMINACION TENDRIA Q SER UNA ELMINACION LOGICA!!! preguntar maxi registros duplicados
+                            institucion.Eliminado = true;
                         else
                         {
-                            listreg.RemoveAt(cont);
-                            listreg.Insert(cont, reg);
+                            listinstitucion.RemoveAt(cont);
+                            listinstitucion.Insert(cont, institucion);
+                        }
+                        ban = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (ban)
+                    listinstitucion.Add(institucion);
+            }
+            else
+            {
+                listinstitucion = new List<LogicaInstitucion>();
+                listinstitucion.Add(institucion);
+            }
+
+            using (StreamWriter escribir = new StreamWriter(rutaarchivo, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listinstitucion);
+                escribir.Write(Serializar);
+                
+            }
+        }
+
+        public void Guardar(LogicaUsuario usu, bool suprimir = false)
+        {
+            string rutas = Path.Combine(carpeta, LogicaUsuario);
+            List<LogicaUsuario> listusu = new List<LogicaUsuario>();
+            listusu = Leer<LogicaUsuario>();
+            int cont = 0; bool br = true;
+            if (listusu != null)
+            {
+                foreach (var item in listusu)
+                {
+                    if (item.Id == usu.Id)
+                    {
+                        if (suprimir)
+                            usu.Eliminado = true;
+                        else
+                        {
+                            listusu.RemoveAt(cont);
+                            listusu.Insert(cont, usu);
                         }
                         br = false;
                         break;
@@ -91,20 +147,20 @@ namespace LogicaDeNegocios
                     cont++;
                 }
                 if (br)
-                    listreg.Add(reg);
+                    listusu.Add(usu);
             }
             else
             {
-                listreg = new List<Registros>();
-                listreg.Add(reg);
+                listusu = new List<LogicaUsuario>();
+                listusu.Add(usu);
             }
+
             using (StreamWriter escribir = new StreamWriter(ruta, false))
             {
-                string Serializar = JsonConvert.SerializeObject(listreg);
+                string Serializar = JsonConvert.SerializeObject(listusu);
                 escribir.Write(Serializar);
             }
         }
-
 
         public void Guardar(LogicaDocente doc, bool suprimir = false)
         {
@@ -119,9 +175,7 @@ namespace LogicaDeNegocios
                     if (item.Id == doc.Id)
                     {
                         if (suprimir)
-                        {
-                            listdoc.RemoveAt(cont);
-                        }
+                            doc.Eliminado = true;
                         else
                         {
                             listdoc.RemoveAt(cont);
@@ -146,6 +200,7 @@ namespace LogicaDeNegocios
                 string Serializar = JsonConvert.SerializeObject(listdoc);
                 escribir.Write(Serializar);
             }
+            ObtenerListaGeneral();
         }
 
         public void Guardar(LogicaPadre doc, bool suprimir = false)
@@ -161,9 +216,7 @@ namespace LogicaDeNegocios
                     if (item.Id == doc.Id)
                     {
                         if (suprimir)
-                        {
-                            doc.Eliminado = true; // TODO > Refactorizar el resto de las funciones 
-                        }
+                            doc.Eliminado = true;
 
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, doc);
@@ -185,7 +238,9 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listdoc);
                 escribir.Write(Serializar);
+                
             }
+            ObtenerListaGeneral();
         }
 
         public void Guardar(LogicaDirectora directivo, bool suprimir = false)
@@ -201,7 +256,7 @@ namespace LogicaDeNegocios
                     if (item.Id == directivo.Id)
                     {
                         if (suprimir)
-                            listreg.RemoveAt(cont);
+                            directivo.Eliminado = true;
                         else
                         {
                             listreg.RemoveAt(cont);
@@ -220,52 +275,13 @@ namespace LogicaDeNegocios
                 listreg = new List<LogicaDirectora>();
                 listreg.Add(directivo);
             }
-            using (StreamWriter escritor = new StreamWriter(rutas, false))
+            using (StreamWriter escribir = new StreamWriter(rutas, false))
             {
                 string Serializar = JsonConvert.SerializeObject(listreg);
-                escritor.Write(Serializar);
+                escribir.Write(Serializar);
+                
             }
-        }
-
-        public void Guardar(LogicaUsuario usu, bool suprimir = false)
-        {
-
-            string rutas = Path.Combine(carpeta, LogicaUsuario);
-            List<LogicaUsuario> listusu = new List<LogicaUsuario>();
-            listusu = Leer<LogicaUsuario>();
-            int cont = 0; bool br = true;
-            if (listusu != null)
-            {
-                foreach (var item in listusu)
-                {
-                    if (item.Id == usu.Id)
-                    {
-                        if (suprimir)
-                            listusu.RemoveAt(cont);
-                        else
-                        {
-                            listusu.RemoveAt(cont);
-                            listusu.Insert(cont, usu);
-                        }
-                        br = false;
-                        break;
-                    }
-                    cont++;
-                }
-                if (br)
-                    listusu.Add(usu);
-            }
-            else
-            {
-                listusu = new List<LogicaUsuario>();
-                listusu.Add(usu);
-            }
-
-            using (StreamWriter escritor = new StreamWriter(ruta, false))
-            {
-                string Serializar = JsonConvert.SerializeObject(listusu);
-                escritor.Write(Serializar);
-            }
+            ObtenerListaGeneral();
         }
 
         public void Guardar(LogicaHijo alumno, bool suprimir = false)
@@ -281,9 +297,7 @@ namespace LogicaDeNegocios
                     if (item.Id == alumno.Id)
                     {
                         if (suprimir)
-                        {
-                            listalum.RemoveAt(cont);
-                        }
+                            alumno.Eliminado = true;
                         else
                         {
                             listalum.RemoveAt(cont);
@@ -303,11 +317,13 @@ namespace LogicaDeNegocios
                 listalum.Add(alumno);
             }
 
-            using (StreamWriter escritor = new StreamWriter(ruta, false))
+            using (StreamWriter escribir = new StreamWriter(ruta, false))
             {
                 string Serializar = JsonConvert.SerializeObject(listalum);
-                escritor.Write(Serializar);
+                escribir.Write(Serializar);
+                
             }
+            ObtenerListaGeneral();
         }
 
 

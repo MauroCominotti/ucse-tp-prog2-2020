@@ -14,6 +14,7 @@ namespace LogicaDeNegocios
         public string Telefono { get; set; }
         public string Ciudad { get; set; }
         public string Provincia { get; set; }
+        public bool Eliminado { get; set; }
 
         // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netcore-3.1
         public bool Equals(LogicaInstitucion other)

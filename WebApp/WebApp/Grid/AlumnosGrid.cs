@@ -21,7 +21,7 @@ namespace WebApp.Grid
 				NoResultsMessage = "No hay mas usuarios para mostrar",
 				NextButtonCaption = string.Empty,
 				PreviousButtonCaption = string.Empty,
-				SummaryMessage = "Viendo {0} a {1} de {2} registros"
+				SummaryMessage = "Viendo {0} a {1} de {2} LogicaUsuario"
 			};
 
 			MVCGridDefinitionTable.Add("AlumnosGrid", new MVCGridBuilder<Hijo>(employeeGridDefauls)
@@ -59,7 +59,7 @@ namespace WebApp.Grid
 					  return new QueryResult<Hijo>()
 					  {
 						  Items = data.Lista.ToArray(),
-						  TotalRecords = data.CantidadRegistros,
+						  TotalRecords = data.CantidadLogicaUsuario,
 					  };
 
 				  })

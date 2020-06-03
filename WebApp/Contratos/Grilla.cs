@@ -3,6 +3,6 @@
     public class Grilla<T>
     {
         public T[] Lista { get; set; }
-        public int CantidadRegistros { get; set; }
+        public int CantidadLogicaUsuario { get; set; }
     }
 }

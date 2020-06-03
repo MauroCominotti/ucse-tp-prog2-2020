@@ -15,65 +15,72 @@ namespace UnitTestProject1
         [TestMethod]
         public void TestMethod1()
         {
-            LogicaDirectora x = new LogicaDirectora()
-            {
-                Id = 5,
-                Apellido = "Cagnino",
-                Cargo = "Directora",
-                Email = "directora@hotmail.com",
-                FechaIngreso = DateTime.Today,
-                Institucion = new LogicaInstitucion()
-                {
-                    Direccion = "añlsdkfj",
-                    Ciudad = "Rafaela",
-                    Id = 6,
-                    Nombre = "UCSE",
-                    Provincia = "Santa Fe",
-                    Telefono = "03492565738"
-                },
-                Nombre = "Cecilia",
-            };
+            //LogicaDirectora x = new LogicaDirectora()
+            //{
+            //    Id = 5,
+            //    Apellido = "Cagnino",
+            //    Cargo = "Directora",
+            //    Email = "directora@hotmail.com",
+            //    FechaIngreso = DateTime.Today,
+            //    Institucion = new LogicaInstitucion()
+            //    {
+            //        Direccion = "añlsdkfj",
+            //        Ciudad = "Rafaela",
+            //        Id = 6,
+            //        Nombre = "UCSE",
+            //        Provincia = "Santa Fe",
+            //        Telefono = "03492565738"
+            //    },
+            //    Nombre = "Cecilia",
+            //};
 
-            //Directora res = AutoMapper.Instancia.Mapear(x, new Directora());
+            ////Directora res = AutoMapper.Instancia.Mapear(x, new Directora());
 
-            //Assert.AreEqual("directora@hotmail.com", res.Email);
-            //Assert.AreEqual(6, res.Institucion.Id);
-            //Assert.AreEqual("Cagnino", res.Apellido);
+            ////Assert.AreEqual("directora@hotmail.com", res.Email);
+            ////Assert.AreEqual(6, res.Institucion.Id);
+            ////Assert.AreEqual("Cagnino", res.Apellido);
 
 
 
-            LogicaDirectora x2 = new LogicaDirectora()
-            {
-                Id = 2,
-                Apellido = "Sanchez",
-                Cargo = "Directora",
-                Email = "directoraSanchez@hotmail.com",
-                FechaIngreso = DateTime.Today,
-                Institucion = new LogicaInstitucion()
-                {
-                    Direccion = "añlsasdfadkfj",
-                    Ciudad = "Sunchales",
-                    Id = 20,
-                    Nombre = "UCSE",
-                    Provincia = "Santa Fe",
-                    Telefono = "03434565738"
-                },
-                Nombre = "Roberta",
-            };
-            List<LogicaDirectora> lista = new List<LogicaDirectora>();
-            lista.Add(x2);
-            lista.Add(x);
+            //LogicaDirectora x2 = new LogicaDirectora()
+            //{
+            //    Id = 2,
+            //    Apellido = "Sanchez",
+            //    Cargo = "Directora",
+            //    Email = "directoraSanchez@hotmail.com",
+            //    FechaIngreso = DateTime.Today,
+            //    Institucion = new LogicaInstitucion()
+            //    {
+            //        Direccion = "añlsasdfadkfj",
+            //        Ciudad = "Sunchales",
+            //        Id = 20,
+            //        Nombre = "UCSE",
+            //        Provincia = "Santa Fe",
+            //        Telefono = "03434565738"
+            //    },
+            //    Nombre = "Roberta",
+            //};
+            //List<LogicaDirectora> lista = new List<LogicaDirectora>();
+            //lista.Add(x2);
+            //lista.Add(x);
 
-            List<Directora> resultado = new List<Directora>();
-            foreach (var elem in lista)
-            {
-                resultado.Add(AutoMapper.Instancia.Mapear<LogicaDirectora, Directora>(elem));
-            }
+            //List<Directora> resultado = new List<Directora>();
+            //foreach (var elem in lista)
+            //{
+            //    resultado.Add(AutoMapper.Instancia.Mapear<LogicaDirectora, Directora>(elem));
+            //}
 
-            Assert.AreEqual("Roberta", resultado[0].Nombre);
-            Assert.AreEqual("Cecilia", resultado[1].Nombre);
-            Assert.AreEqual( 20, resultado[0].Institucion.Id);
-            Assert.AreEqual( 6, resultado[1].Institucion.Id);
+            //Assert.AreEqual("Roberta", resultado[0].Nombre);
+            //Assert.AreEqual("Cecilia", resultado[1].Nombre);
+            //Assert.AreEqual( 20, resultado[0].Institucion.Id);
+            //Assert.AreEqual( 6, resultado[1].Institucion.Id);
+
+
+
+
+
+            GeneralService servicio = new GeneralService();
+            servicio.ObtenerNombreGrupo();
         }
     }
 }

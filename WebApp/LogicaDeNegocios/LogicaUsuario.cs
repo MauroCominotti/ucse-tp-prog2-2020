@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Contratos;
 
 namespace LogicaDeNegocios
 {
@@ -13,5 +14,9 @@ namespace LogicaDeNegocios
         public string Apellido { get; set; }
         public string Email { get; set; }
         public bool Eliminado { get; set; }
+        public string Password { get; set; }
+        public Roles[] Roles { get; set; }
+        public Roles RolSeleccionado { get; set; }
+        public int IdInstitucion { get; set; }
     }
 }

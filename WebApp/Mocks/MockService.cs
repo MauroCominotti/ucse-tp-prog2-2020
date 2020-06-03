@@ -279,7 +279,7 @@ namespace Mocks
                 Lista = _alumnos
                 .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _alumnos.Count
+                CantidadLogicaUsuario = _alumnos.Count
             };
         }
 
@@ -299,7 +299,7 @@ namespace Mocks
             {
                 Lista = _directoras.Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                                     .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _directoras.Count
+                CantidadLogicaUsuario = _directoras.Count
             };
         }
 
@@ -315,7 +315,7 @@ namespace Mocks
                 Lista = _docentes
                 .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _docentes.Count
+                CantidadLogicaUsuario = _docentes.Count
             };
         }
 
@@ -341,7 +341,7 @@ namespace Mocks
                 Lista = _padres
                 .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _padres.Count
+                CantidadLogicaUsuario = _padres.Count
             };
         }
 

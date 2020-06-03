@@ -11,7 +11,7 @@ namespace WebApp.Controllers
     [Authorize]
     public class HomeController : BaseController
     {
-        private static IServicioWeb servicio = CreateService();
+        private static IServicioWeb servicio = CreateService(true);
 
         public ActionResult Index()
         {
