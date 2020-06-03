@@ -24,15 +24,21 @@ namespace LogicaDeNegocios
             return false;
         }
 
-        public static Resultado PermisosDirectora(Roles rol) //Acá para ver si tiene los permisos necesarios
+        public static Resultado PermisosDirectora(Roles rol, UsuarioLogueado usuarioLogueado) //Acá para ver si tiene los permisos necesarios y si existe en la DB
         {
             Resultado result = new Resultado();
             if ((int)rol != 1)
             {
-                result.Errores.Add("Permisos insuficientes");
+                result.Errores.Add("Error 403: Permisos insuficientes");
+            }
+            else
+            {
+                List<LogicaDirectora> Directora = Archivo.Instancia.Leer<LogicaDirectora>();
+                if (Directora == null || Directora.Count() == 0 || Directora.Find(x => x.Email == usuarioLogueado.Email) == null)
+                    result.Errores.Add("Error 404: Directora no encontrada en la base de datos.");
             }
             return result;
-        } 
+        }
 
         public static Boolean MismaInstitucion(int Id, string Email) // toma un docente, alumno, etc,(Id) y un usuario(Email)
         {
@@ -41,5 +47,5 @@ namespace LogicaDeNegocios
             return institucionAComparar == institucionDelUsuario;
         }
     }
-    
+
 }

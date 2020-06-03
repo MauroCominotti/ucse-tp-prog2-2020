@@ -19,7 +19,7 @@ namespace LogicaDeNegocios
         private const string Registros = @"registros.txt";
         private const string LogicaNota = @"notas.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory;//Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, Registros, LogicaNota }; 
+        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, Registros, LogicaNota };
 
         // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ namespace LogicaDeNegocios
             }
         }
 
-        public static List<T> VerificarExistencia <T>(string r, T obj)
+        public static List<T> VerificarExistencia<T>(string r, T obj)
         {
             File.Create(r);
             List<T> lista = new List<T>();
@@ -66,7 +66,7 @@ namespace LogicaDeNegocios
             }
         }
         //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
-        public void Guardar(Registros reg, bool suprimir)
+        public void Guardar(Registros reg, bool suprimir = false)
         {
             string rutas = Path.Combine(carpeta, Registros);
             List<Registros> listreg = new List<Registros>();
@@ -148,8 +148,47 @@ namespace LogicaDeNegocios
             }
         }
 
+        public void Guardar(LogicaPadre doc, bool suprimir = false)
+        {
+            string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
+            List<LogicaPadre> listdoc = new List<LogicaPadre>();
+            listdoc = Leer<LogicaPadre>();
+            int cont = 0; bool ban = true;
+            if (listdoc != null)
+            {
+                foreach (var item in listdoc)
+                {
+                    if (item.Id == doc.Id)
+                    {
+                        if (suprimir)
+                        {
+                            doc.Eliminado = true; // TODO > Refactorizar el resto de las funciones 
+                        }
 
-        public void Guardar(LogicaDirectora directivo, bool suprimir)
+                        listdoc.RemoveAt(cont);
+                        listdoc.Insert(cont, doc);
+                        ban = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (ban)
+                    listdoc.Add(doc);
+            }
+            else
+            {
+                listdoc = new List<LogicaPadre>();
+                listdoc.Add(doc);
+            }
+
+            using (StreamWriter escribir = new StreamWriter(rutaarchivo, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listdoc);
+                escribir.Write(Serializar);
+            }
+        }
+
+        public void Guardar(LogicaDirectora directivo, bool suprimir = false)
         {
             string rutas = Path.Combine(carpeta, LogicaDirectora);
             List<LogicaDirectora> listreg = new List<LogicaDirectora>();
@@ -188,7 +227,7 @@ namespace LogicaDeNegocios
             }
         }
 
-        public void Guardar(LogicaUsuario usu, bool suprimir)
+        public void Guardar(LogicaUsuario usu, bool suprimir = false)
         {
 
             string rutas = Path.Combine(carpeta, LogicaUsuario);
@@ -229,7 +268,7 @@ namespace LogicaDeNegocios
             }
         }
 
-        public void Guardar(LogicaHijo alumno, bool suprimir)
+        public void Guardar(LogicaHijo alumno, bool suprimir = false)
         {
             string rutas = Path.Combine(carpeta, LogicaHijo);
             List<LogicaHijo> listalum = new List<LogicaHijo>();

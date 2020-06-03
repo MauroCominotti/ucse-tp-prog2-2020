@@ -31,6 +31,7 @@ namespace Servicios
         {
             var config = new MapperConfiguration(cfg => {
                 cfg.CreateMap<LogicaDirectora, Directora>();
+                cfg.CreateMap<Registros, UsuarioLogueado>();
                 cfg.CreateMap<LogicaInstitucion, Institucion>();
                 cfg.CreateMap<LogicaSala, Sala>();
                 cfg.CreateMap<LogicaUsuario, Usuario>();
