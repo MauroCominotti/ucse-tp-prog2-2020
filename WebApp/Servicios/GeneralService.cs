@@ -638,7 +638,36 @@ namespace Servicios
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            List<Hijo> personas = new List<Hijo>();
+            var usuario = Archivo.Instancia.ObtenerListaGeneral().Find(x => x.Email == usuarioLogueado.Email);
+
+            if (usuario is LogicaDirectora)
+            {
+                LogicaDirectora directora = usuario as LogicaDirectora;
+                var alumnosDirec = Archivo.Instancia.Leer<LogicaHijo>().
+                    FindAll(alm => alm.Institucion.Id == directora.Institucion.Id);
+                var alumnsmapeados = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(alumnosDirec);
+                personas.AddRange(alumnsmapeados);
+            }
+            if (usuario is LogicaDocente)
+            {
+                LogicaDocente docente = usuario as LogicaDocente;
+                var salasLista = docente.Salas.ToList();
+                var alumnosDoc = Archivo.Instancia.Leer<LogicaHijo>()
+                    .FindAll(alm => salasLista.Exists(sala => sala.Id == alm.Sala.Id));
+
+                var almMap = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(alumnosDoc);
+                personas.AddRange(almMap);
+            }
+            if (usuario is LogicaPadre)
+            {
+                LogicaPadre padre = usuario as LogicaPadre;
+                var hijos = padre.Hijos.ToList();
+                var hijosMap = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(hijos);
+                personas.AddRange(hijosMap);
+            }
+
+            return personas.ToArray();
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
@@ -676,7 +705,47 @@ namespace Servicios
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            /// Respuesta a una nota. Si es docente la nota debe ser de un alumno de la sala
+            var resultado = new Resultado();
+            var usuario = Archivo.Instancia.ObtenerListaGeneral().Find(x => x.Email == usuarioLogueado.Email);
+            var notaMap = AutoMapper.Instancia.Mapear<Nota, LogicaNota>(nota);
+            var comentarioMap = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
+
+            if (usuario is LogicaDirectora)
+            {
+                LogicaDirectora directora = usuario as LogicaDirectora;
+                var alumnoDirec = Archivo.Instancia.Leer<LogicaHijo>()
+                    .FindAll(x => x.Institucion.Id == directora.Institucion.Id)
+                    .Exists(alm => alm.Notas.ToList().Exists(not => not.Id == nota.Id));
+
+                notaMap.Comentarios.ToList().Add(comentarioMap);
+                notaMap.Comentarios.ToArray();
+
+                //Archivo.Instancia.Guardar(notamap)
+
+
+                if (alumnoDirec == false)
+                {
+                    resultado.Errores.Add("Esa nota no le corresponde a la directora");
+                }
+
+            }
+
+            if (usuario is LogicaDocente)
+            {
+                LogicaDocente docente = usuario as LogicaDocente;
+                var salasLista = docente.Salas.ToList();
+                var alumnoDocente = Archivo.Instancia.Leer<LogicaHijo>()
+                    .FindAll(x => salasLista.Exists(sala => sala.Id == x.Sala.Id))
+                    .Exists(alm => alm.Notas.ToList().Exists(not => not.Id == nota.Id));
+
+
+
+            }
+
+
+            return resultado;
+
         }
     }
 }

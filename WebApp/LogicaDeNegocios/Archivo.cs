@@ -65,6 +65,19 @@ namespace LogicaDeNegocios
                 return listusu;
             }
         }
+
+
+        public List<LogicaUsuario> ObtenerListaGeneral()
+        {
+            List<LogicaUsuario> usuarios = new List<LogicaUsuario>();
+            usuarios.AddRange(this.Leer<LogicaDirectora>());
+            usuarios.AddRange(this.Leer<LogicaDocente>());
+            usuarios.AddRange(this.Leer<LogicaPadre>());
+            usuarios.AddRange(this.Leer<LogicaHijo>());
+
+            return usuarios;
+        }
+
         //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
         public void Guardar(Registros reg, bool suprimir)
         {
