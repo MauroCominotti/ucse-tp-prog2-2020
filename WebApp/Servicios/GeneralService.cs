@@ -108,8 +108,60 @@ namespace Servicios
             // si viene vacio tengo q usar el array de salas y tengo q buscar en cada sala todos los alumnos 
             // q esten ahi adentro y mandarle las notas a todos los alumnos q esten ahi
             // 1 nota por alumno
+            Resultado resultado = new Resultado();
+            var alumnosLogica = Archivo.Instancia.Leer<LogicaHijo>();
+            var notaMap = AutoMapper.Instancia.Mapear<Nota, LogicaNota>(nota);
+            var salasLista = salas.ToList();
+            var alumnosSalas = alumnosLogica.FindAll(alm => salasLista.Exists(sala => sala.Id == alm.Sala.Id));
 
-            throw new NotImplementedException();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                if (hijos != null)
+                {
+                    foreach (var hijo in hijos)
+                    {
+                        hijo.Notas.ToList().Add(nota);
+                        var hijoMap = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
+                        Archivo.Instancia.Guardar(hijoMap, false);
+                    }
+                }
+                if (salas != null)
+                {
+                    foreach (var alumno in alumnosSalas)
+                    {
+                        alumno.Notas.ToList().Add(notaMap);
+                        Archivo.Instancia.Guardar(alumno, false);
+                    }
+                }
+            }
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente)
+            {
+                foreach (var alumno in alumnosSalas)
+                {
+                    alumno.Notas.ToList().Add(notaMap);
+                    Archivo.Instancia.Guardar(alumno, false);
+                }
+                
+            }
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
+            {
+                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email);
+                var hijosLogica = AutoMapper.Instancia.ConvertirLista<Hijo, LogicaHijo>(hijos.ToList());
+                var hijosPadreLogica = padre.Hijos.ToList();
+                foreach (var hijo in hijosPadreLogica)
+                {
+                    var siexiste = hijosLogica.Exists(x => x == hijo);
+                    hijo.Notas.ToList().Add(notaMap);
+                    Archivo.Instancia.Guardar(padre, false);
+                }
+                
+
+
+            }
+
+
+            return resultado;
         }
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
