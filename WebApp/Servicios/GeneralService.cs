@@ -605,94 +605,94 @@ namespace Servicios
 
         public string ObtenerNombreGrupo()
         {
-            List<LogicaDirectora> _directoras = new List<LogicaDirectora>()
-            {
-            new LogicaDirectora(){ Id = 1, Nombre = "A 1", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 2, Nombre = "A 2", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            new LogicaDirectora(){ Id = 3, Nombre = "A 3", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 4, Nombre = "A 4", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            new LogicaDirectora(){ Id = 5, Nombre = "A 5", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 6, Nombre = "A 6", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            new LogicaDirectora(){ Id = 7, Nombre = "A 7", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 8, Nombre = "A 8", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            new LogicaDirectora(){ Id = 9, Nombre = "A 9", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 10, Nombre = "A 10", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            new LogicaDirectora(){ Id = 11, Nombre = "A 11", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 12, Nombre = "A 12", Apellido ="B", Email = "C", Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            };
+            //List<LogicaDirectora> _directoras = new List<LogicaDirectora>()
+            //{
+            //new LogicaDirectora(){ Id = 1, Nombre = "A 1", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 2, Nombre = "A 2", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //new LogicaDirectora(){ Id = 3, Nombre = "A 3", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 4, Nombre = "A 4", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //new LogicaDirectora(){ Id = 5, Nombre = "A 5", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 6, Nombre = "A 6", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //new LogicaDirectora(){ Id = 7, Nombre = "A 7", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 8, Nombre = "A 8", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //new LogicaDirectora(){ Id = 9, Nombre = "A 9", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 10, Nombre = "A 10", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //new LogicaDirectora(){ Id = 11, Nombre = "A 11", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 12, Nombre = "A 12", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
+            //};
 
-            List<LogicaInstitucion> _instituciones = new List<LogicaInstitucion>()
-            {
-            new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
-            new LogicaInstitucion(){ Id = 2, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
-            };
+            //List<LogicaInstitucion> _instituciones = new List<LogicaInstitucion>()
+            //{
+            //new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //new LogicaInstitucion(){ Id = 2, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "San Jose", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //};
 
-            List<LogicaDocente> _docentes = new List<LogicaDocente>()
-            {
-            new LogicaDocente(){ Id = 1, Nombre = "D 1", Apellido ="DA 1", Eliminado = false, IdInstitucion = 1, Email = "DE 1"},new LogicaDocente(){ Id = 2, Nombre = "D 2", Apellido ="DA 2", Eliminado = false, IdInstitucion = 1, Email = "DE 2"},
-            new LogicaDocente(){ Id = 3, Nombre = "D 3", Apellido ="DA 3", Eliminado = false, IdInstitucion = 1, Email = "DE 3"},new LogicaDocente(){ Id = 4, Nombre = "D 4", Apellido ="DA 4", Eliminado = false, IdInstitucion = 1, Email = "DE 4"},
-            new LogicaDocente(){ Id = 5, Nombre = "D 5", Apellido ="DA 5", Eliminado = false, IdInstitucion = 1, Email = "DE 5"},new LogicaDocente(){ Id = 6, Nombre = "D 6", Apellido ="DA 6", Eliminado = false, IdInstitucion = 1, Email = "DE 6"},
-            new LogicaDocente(){ Id = 7, Nombre = "D 7", Apellido ="DA 7", Eliminado = false, IdInstitucion = 1, Email = "DE 7"},new LogicaDocente(){ Id = 8, Nombre = "D 8", Apellido ="DA 8", Eliminado = false, IdInstitucion = 1, Email = "DE 8"},
-            new LogicaDocente(){ Id = 9, Nombre = "D 9", Apellido ="DA 9", Eliminado = false, IdInstitucion = 2, Email = "DE 9"},new LogicaDocente(){ Id = 10, Nombre = "D 10", Apellido ="DA 10", Eliminado = false, IdInstitucion = 2, Email = "DE 10"},
-            new LogicaDocente(){ Id = 11, Nombre = "D 11", Apellido ="DA 11", Eliminado = false, IdInstitucion = 2, Email = "DE 11"},new LogicaDocente(){ Id = 12, Nombre = "D 12", Apellido ="DA 12", Eliminado = false, IdInstitucion = 2, Email = "DE 12"},
-            new LogicaDocente(){ Id = 13, Nombre = "D 13", Apellido ="DA 13", Eliminado = false, IdInstitucion = 2, Email = "DE 13"},new LogicaDocente(){ Id = 14, Nombre = "D 14", Apellido ="DA 14", Eliminado = false, IdInstitucion = 2, Email = "DE 14"},
-            new LogicaDocente(){ Id = 15, Nombre = "D 15", Apellido ="DA 15", Eliminado = false, IdInstitucion = 2, Email = "DE 15"},new LogicaDocente(){ Id = 16, Nombre = "D 16", Apellido ="DA 16", Eliminado = false, IdInstitucion = 2, Email = "DE 16"},
-            };
+            //List<LogicaDocente> _docentes = new List<LogicaDocente>()
+            //{
+            //new LogicaDocente(){ Id = 13, Nombre = "D 1", Apellido ="DA 1", Eliminado = false, IdInstitucion = 1, Email = "DE 1"},new LogicaDocente(){ Id = 14, Nombre = "D 2", Apellido ="DA 2", Eliminado = false, IdInstitucion = 1, Email = "DE 2"},
+            //new LogicaDocente(){ Id = 15, Nombre = "D 3", Apellido ="DA 3", Eliminado = false, IdInstitucion = 1, Email = "DE 3"},new LogicaDocente(){ Id = 16, Nombre = "D 4", Apellido ="DA 4", Eliminado = false, IdInstitucion = 1, Email = "DE 4"},
+            //new LogicaDocente(){ Id = 17, Nombre = "D 5", Apellido ="DA 5", Eliminado = false, IdInstitucion = 1, Email = "DE 5"},new LogicaDocente(){ Id = 18, Nombre = "D 6", Apellido ="DA 6", Eliminado = false, IdInstitucion = 1, Email = "DE 6"},
+            //new LogicaDocente(){ Id = 19, Nombre = "D 7", Apellido ="DA 7", Eliminado = false, IdInstitucion = 1, Email = "DE 7"},new LogicaDocente(){ Id = 20, Nombre = "D 8", Apellido ="DA 8", Eliminado = false, IdInstitucion = 1, Email = "DE 8"},
+            //new LogicaDocente(){ Id = 21, Nombre = "D 9", Apellido ="DA 9", Eliminado = false, IdInstitucion = 2, Email = "DE 9"},new LogicaDocente(){ Id = 22, Nombre = "D 10", Apellido ="DA 10", Eliminado = false, IdInstitucion = 2, Email = "DE 10"},
+            //new LogicaDocente(){ Id = 23, Nombre = "D 11", Apellido ="DA 11", Eliminado = false, IdInstitucion = 2, Email = "DE 11"},new LogicaDocente(){ Id = 24, Nombre = "D 12", Apellido ="DA 12", Eliminado = false, IdInstitucion = 2, Email = "DE 12"},
+            //new LogicaDocente(){ Id = 25, Nombre = "D 13", Apellido ="DA 13", Eliminado = false, IdInstitucion = 2, Email = "DE 13"},new LogicaDocente(){ Id = 26, Nombre = "D 14", Apellido ="DA 14", Eliminado = false, IdInstitucion = 2, Email = "DE 14"},
+            //new LogicaDocente(){ Id = 27, Nombre = "D 15", Apellido ="DA 15", Eliminado = false, IdInstitucion = 2, Email = "DE 15"},new LogicaDocente(){ Id = 28, Nombre = "D 16", Apellido ="DA 16", Eliminado = false, IdInstitucion = 2, Email = "DE 16"},
+            //};
 
-            List<LogicaNota> _notas1 = new List<LogicaNota>()
-            {
-            new LogicaNota(){ Id = 1, Leida = false, Titulo= "LogicaNota 1", Descripcion = "Descripcion de la nota 1", Comentarios = new LogicaComentario[]{ } },
-            new LogicaNota(){ Id = 2, Leida = false, Titulo= "LogicaNota 2", Descripcion = "Descripcion de la nota 2", Comentarios = new LogicaComentario[]{
-                new LogicaComentario() { Fecha = DateTime.Now.AddDays(-2), Mensaje = "LogicaComentario 1" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera" } },
-                new LogicaComentario() { Fecha = DateTime.Now.AddDays(-1), Mensaje = "LogicaComentario 2" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera 2" } },
-                } }
-            };
+            //List<LogicaNota> _notas1 = new List<LogicaNota>()
+            //{
+            //new LogicaNota(){ Id = 1, Leida = false, Titulo= "LogicaNota 1", Descripcion = "Descripcion de la nota 1", Comentarios = new LogicaComentario[]{ } },
+            //new LogicaNota(){ Id = 2, Leida = false, Titulo= "LogicaNota 2", Descripcion = "Descripcion de la nota 2", Comentarios = new LogicaComentario[]{
+            //    new LogicaComentario() { Fecha = DateTime.Now.AddDays(-2), Mensaje = "LogicaComentario 1" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera" } },
+            //    new LogicaComentario() { Fecha = DateTime.Now.AddDays(-1), Mensaje = "LogicaComentario 2" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera 2" } },
+            //    } }
+            //};
 
-            List<LogicaNota> _notas2 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 3, Leida = true, Titulo= "LogicaNota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas2 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 3, Leida = true, Titulo= "LogicaNota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new LogicaComentario[]{ } },
+            //};
 
-            List<LogicaNota> _notas3 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 4, Leida = false, Titulo= "LogicaNota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas3 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 4, Leida = false, Titulo= "LogicaNota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new LogicaComentario[]{ } },
+            //};
 
-            List<LogicaNota> _notas4 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 5, Leida = true, Titulo= "LogicaNota 5", Descripcion = "Descripcion de la nota 5", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas4 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 5, Leida = true, Titulo= "LogicaNota 5", Descripcion = "Descripcion de la nota 5", Comentarios = new LogicaComentario[]{ } },
+            //};
 
-            List<LogicaHijo> _alumnos = new List<LogicaHijo>()
-            {
-            new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() },
-            new LogicaHijo(){ Id = 2, Nombre = "AL 2", Apellido="AP 2", IdInstitucion = 1, Eliminado = false, Email="APE 2", FechaNacimiento = new DateTime(1991,3,20), ResultadoUltimaEvaluacionAnual = 6, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas2.ToArray()},
-            new LogicaHijo(){ Id = 3, Nombre = "AL 3", Apellido="AP 3", IdInstitucion = 2, Eliminado = false, Email="APE 3", FechaNacimiento = new DateTime(1992,12,14), ResultadoUltimaEvaluacionAnual = 5, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas3.ToArray()},
-            new LogicaHijo(){ Id = 4, Nombre = "AL 4", Apellido="AP 4", IdInstitucion = 2, Eliminado = false, Email="APE 4", FechaNacimiento = new DateTime(1989,11,29), ResultadoUltimaEvaluacionAnual = 3, Sala = new LogicaSala(){ Id = 3 }, Notas = _notas4.ToArray()},
-            };
+            //List<LogicaHijo> _alumnos = new List<LogicaHijo>()
+            //{
+            //new LogicaHijo(){ Id = 33, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() },
+            //new LogicaHijo(){ Id = 34, Nombre = "AL 2", Apellido="AP 2", IdInstitucion = 1, Eliminado = false, Email="APE 2", FechaNacimiento = new DateTime(1991,3,20), ResultadoUltimaEvaluacionAnual = 6, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas2.ToArray()},
+            //new LogicaHijo(){ Id = 35, Nombre = "AL 3", Apellido="AP 3", IdInstitucion = 2, Eliminado = false, Email="APE 3", FechaNacimiento = new DateTime(1992,12,14), ResultadoUltimaEvaluacionAnual = 5, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas3.ToArray()},
+            //new LogicaHijo(){ Id = 36, Nombre = "AL 4", Apellido="AP 4", IdInstitucion = 2, Eliminado = false, Email="APE 4", FechaNacimiento = new DateTime(1989,11,29), ResultadoUltimaEvaluacionAnual = 3, Sala = new LogicaSala(){ Id = 3 }, Notas = _notas4.ToArray()},
+            //};
 
-            List<Sala> _salas = new List<Sala>()
-            {
-                new Sala(){ Id = 1, Nombre = "Sala 1" },
-                new Sala(){ Id = 2, Nombre = "Sala 2" },
-                new Sala(){ Id = 3, Nombre = "Sala 3" },
-            };
+            //List<LogicaSala> _salas = new List<LogicaSala>()
+            //{
+            //    new LogicaSala(){ Id = 1, Nombre = "LogicaSala 1" },
+            //    new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" },
+            //    new LogicaSala(){ Id = 3, Nombre = "LogicaSala 3" },
+            //};
 
-            List<LogicaPadre> _padres = new List<LogicaPadre>()
-            {
-            new LogicaPadre(){ Id = 1, Nombre = "P 1", Apellido = "PA 1", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 1"},
-            new LogicaPadre(){ Id = 2, Nombre = "P 2", Apellido = "PA 2", Eliminado = false, IdInstitucion = 1, Email = "PE 2"},
-            new LogicaPadre(){ Id = 3, Nombre = "P 3", Apellido = "PA 3", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 3"},
-            new LogicaPadre(){ Id = 4, Nombre = "P 4", Apellido = "PA 4", Eliminado = false, IdInstitucion = 1, Email = "PE 4"},
-            };
+            //List<LogicaPadre> _padres = new List<LogicaPadre>()
+            //{
+            //new LogicaPadre(){ Id = 29, Nombre = "P 1", Apellido = "PA 1", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 1"},
+            //new LogicaPadre(){ Id = 30, Nombre = "P 2", Apellido = "PA 2", Eliminado = false, Hijos = new LogicaHijo[] { }, IdInstitucion = 1, Email = "PE 2", Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre },
+            //new LogicaPadre(){ Id = 31, Nombre = "P 3", Apellido = "PA 3", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 3"},
+            //new LogicaPadre(){ Id = 32, Nombre = "P 4", Apellido = "PA 4", Eliminado = false, Hijos = new LogicaHijo[] { }, IdInstitucion = 2, Email = "PE 4"},
+            //};
 
-            //_directoras.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(x)));
-            //_docentes.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(x)));
-            //_padres.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(x)));
-            ////_notas1.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Nota, LogicaNota>(x)));
-            //_alumnos.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(x)));
-            ////_salas.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Sala, LogicaSala>(x)));
+            ////_directoras.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(x)));
+            ////_docentes.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(x)));
+            ////_padres.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(x)));
+            //////_notas1.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Nota, LogicaNota>(x)));
+            ////_alumnos.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(x)));
+            //////_salas.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Sala, LogicaSala>(x)));
 
-            _directoras.ForEach(x => Archivo.Instancia.Guardar(x));
-            _docentes.ForEach(x => Archivo.Instancia.Guardar(x));
-            _padres.ForEach(x => Archivo.Instancia.Guardar(x));
-            _instituciones.ForEach(x => Archivo.Instancia.Guardar(x));
-            //_notas1.ForEach(x => Archivo.Instancia.Guardar());
-            _alumnos.ForEach(x => Archivo.Instancia.Guardar(x));
+            //_directoras.ForEach(x => Archivo.Instancia.Guardar(x));
+            //_docentes.ForEach(x => Archivo.Instancia.Guardar(x));
+            //_padres.ForEach(x => Archivo.Instancia.Guardar(x));
+            //_instituciones.ForEach(x => Archivo.Instancia.Guardar(x));
+            ////_notas1.ForEach(x => Archivo.Instancia.Guardar());
+            //_alumnos.ForEach(x => Archivo.Instancia.Guardar(x));
 
 
             return "Cominotti Mauro, Yacovino Juan, Zoja Emanuel";

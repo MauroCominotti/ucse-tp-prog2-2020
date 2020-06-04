@@ -66,14 +66,14 @@ namespace LogicaDeNegocios
             List<LogicaUsuario> usuarios = new List<LogicaUsuario>();
             var listadir = Leer<LogicaDirectora>();
             var listadoc = Leer<LogicaDocente>();
-            var listadpadre = Leer<LogicaPadre>();
+            var listapadre = Leer<LogicaPadre>();
             var listahijo = Leer<LogicaHijo>();
             if (listadir != null)
                 usuarios.AddRange(listadir.Select(x => x as LogicaUsuario));
             if (listadoc != null)
                 usuarios.AddRange(listadoc.Select(x => x as LogicaUsuario));
-            if (listadpadre != null)
-                usuarios.AddRange(listadir.Select(x => x as LogicaUsuario));
+            if (listapadre != null)
+                usuarios.AddRange(listapadre.Select(x => x as LogicaUsuario));
             if (listahijo != null)
                 usuarios.AddRange(listahijo.Select(x => x as LogicaUsuario));
             
@@ -83,7 +83,7 @@ namespace LogicaDeNegocios
         //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
         public void Guardar(LogicaInstitucion institucion, bool suprimir = false)
         {
-            string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
+            string rutaarchivo = Path.Combine(carpeta, LogicaInstitucion);
             List<LogicaInstitucion> listinstitucion = new List<LogicaInstitucion>();
             listinstitucion = Leer<LogicaInstitucion>();
             int cont = 0; bool ban = true;
@@ -167,7 +167,7 @@ namespace LogicaDeNegocios
             string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
             List<LogicaDocente> listdoc = new List<LogicaDocente>();
             listdoc = Leer<LogicaDocente>();
-            int cont = 0; bool ban = true;
+            int cont = 0; bool ban = true; // TODO > Sacar bandera siempre PascalCase
             if (listdoc != null)
             {
                 foreach (var item in listdoc)
@@ -205,7 +205,7 @@ namespace LogicaDeNegocios
 
         public void Guardar(LogicaPadre doc, bool suprimir = false)
         {
-            string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
+            string rutaarchivo = Path.Combine(carpeta, LogicaPadre);
             List<LogicaPadre> listdoc = new List<LogicaPadre>();
             listdoc = Leer<LogicaPadre>();
             int cont = 0; bool ban = true;
