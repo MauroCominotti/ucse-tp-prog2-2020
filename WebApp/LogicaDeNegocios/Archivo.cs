@@ -83,7 +83,7 @@ namespace LogicaDeNegocios
             if (listahijo != null)
                 usuarios.AddRange(listahijo.Select(x => x as LogicaUsuario));
 
-            usuarios.ForEach(x => Guardar(x));
+            Guardar(usuarios);
         }
 
         //Guardar en archivos //////////////////////////////////////////////////////////////////////////////
@@ -181,48 +181,48 @@ namespace LogicaDeNegocios
             }
         }
 
-        public void Guardar(LogicaUsuario usu, bool suprimir = false)
+        public void Guardar(List<LogicaUsuario> usu, bool suprimir = false)
         {
             string rutas = Path.Combine(carpeta, LogicaUsuario);
-            List<LogicaUsuario> listusu = new List<LogicaUsuario>();
-            listusu = Leer<LogicaUsuario>();
-            int cont = 0; bool br = true;
-            if (listusu != null)
-            {
-                foreach (var item in listusu)
-                {
-                    if (item.Id == usu.Id)
-                    {
-                        if (suprimir)
-                        {
-                            item.Eliminado = true;
-                            eventoBaja(this, null);
-                        }
-                        else
-                            eventoModificacion(this, null);
-                        listusu.RemoveAt(cont);
-                        listusu.Insert(cont, item);
+            //List<LogicaUsuario> listusu = new List<LogicaUsuario>();
+            //listusu = Leer<LogicaUsuario>();
+            //int cont = 0; bool br = true;
+            //if (listusu != null)
+            //{
+            //    foreach (var item in listusu)
+            //    {
+            //        if (item.Id == usu.Id)
+            //        {
+            //            if (suprimir)
+            //            {
+            //                item.Eliminado = true;
+            //                eventoBaja(this, null);
+            //            }
+            //            else
+            //                eventoModificacion(this, null);
+            //            listusu.RemoveAt(cont);
+            //            listusu.Insert(cont, item);
 
-                        br = false;
-                        break;
-                    }
-                    cont++;
-                }
-                if (br)
-                {
-                    listusu.Add(usu);
-                    eventoAlta(this, null);
-                }
-            }
-            else
-            {
-                listusu = new List<LogicaUsuario>();
-                listusu.Add(usu);
-            }
+            //            br = false;
+            //            break;
+            //        }
+            //        cont++;
+            //    }
+            //    if (br)
+            //    {
+            //        listusu.Add(usu);
+            //        eventoAlta(this, null);
+            //    }
+            //}
+            //else
+            //{
+            //    listusu = new List<LogicaUsuario>();
+            //    listusu.Add(usu);
+            //}
 
-            using (StreamWriter escribir = new StreamWriter(ruta, false))
+            using (StreamWriter escribir = new StreamWriter(rutas, false))
             {
-                string Serializar = JsonConvert.SerializeObject(listusu);
+                string Serializar = JsonConvert.SerializeObject(usu);
                 escribir.Write(Serializar);
             }
         }

@@ -16,7 +16,7 @@ namespace LogicaDeNegocios
         public bool Eliminado { get; set; }
         public string Password { get; set; }
         public Roles[] Roles { get; set; }
-        public Roles RolSeleccionado { get; set; }
+        public Roles? RolSeleccionado { get; set; }
         public int IdInstitucion { get; set; }
     }
 }

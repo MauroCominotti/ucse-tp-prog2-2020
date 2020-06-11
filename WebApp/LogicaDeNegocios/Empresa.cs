@@ -42,9 +42,16 @@ namespace LogicaDeNegocios
 
         public static Boolean MismaInstitucion(int Id, string Email) // toma un docente, alumno, etc,(Id) y un usuario(Email)
         {
-            int institucionAComparar = Archivo.Instancia.Leer<LogicaUsuario>().First(x => x.Id == Id).IdInstitucion;
-            int institucionDelUsuario = Archivo.Instancia.Leer<LogicaUsuario>().First(x => x.Email == Email).IdInstitucion;
-            return institucionAComparar == institucionDelUsuario;
+            try
+            {
+                int institucionAComparar = Archivo.Instancia.Leer<LogicaUsuario>().FirstOrDefault(x => x.Id == Id && x.Eliminado == false).IdInstitucion;
+                int institucionDelUsuario = Archivo.Instancia.Leer<LogicaUsuario>().FirstOrDefault(x => x.Email == Email && x.Eliminado == false).IdInstitucion;
+                return institucionAComparar == institucionDelUsuario;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 

@@ -1,1 +1,1 @@
-[{"Id":1,"Nombre":"LogicaSala 1","Eliminado":false},{"Id":2,"Nombre":"LogicaSala 2","Eliminado":false},{"Id":3,"Nombre":"LogicaSala 3","Eliminado":false}]
+[{"Id":1,"Nombre":"Matematica","Eliminado":false,"IdInstitucion":1},{"Id":2,"Nombre":"Lengua","Eliminado":false,"IdInstitucion":1},{"Id":3,"Nombre":"Programacion","Eliminado":false,"IdInstitucion":1}]
