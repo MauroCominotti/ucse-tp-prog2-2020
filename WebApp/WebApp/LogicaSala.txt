@@ -1,0 +1,1 @@
+[{"Id":1,"Nombre":"LogicaSala 1","Eliminado":false},{"Id":2,"Nombre":"LogicaSala 2","Eliminado":false},{"Id":3,"Nombre":"LogicaSala 3","Eliminado":false}]

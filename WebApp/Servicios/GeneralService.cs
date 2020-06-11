@@ -8,6 +8,30 @@ namespace Servicios
 {
     public class GeneralService : IServicioWeb
     {
+        public GeneralService () {
+            Archivo.Instancia.eventoAlta += AltaRealizada;
+            Archivo.Instancia.eventoBaja += BajaRealizada;
+            Archivo.Instancia.eventoModificacion += ModificacionRealizada;
+            Archivo.Instancia.eventoLectura += LecturaRealizada;
+        }
+
+        static void AltaRealizada (object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"El Alta se realizó correctamente");
+        }
+        static void BajaRealizada(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"La baja se realizó correctamente");
+        }
+        static void ModificacionRealizada(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"La modificacion se realizó correctamente");
+        }
+        static void LecturaRealizada(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"La lectura se realizó en el archivo: {sender}");
+        }
+
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
@@ -109,11 +133,10 @@ namespace Servicios
             // q esten ahi adentro y mandarle las notas a todos los alumnos q esten ahi
             // 1 nota por alumno
             Resultado resultado = new Resultado();
-            var alumnosLogica = Archivo.Instancia.Leer<LogicaHijo>();
+            var alumnosLogica = Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => x.Eliminado == false);
             var notaMap = AutoMapper.Instancia.Mapear<Nota, LogicaNota>(nota);
             var salasLista = salas.ToList();
-            var alumnosSalas = alumnosLogica.FindAll(alm => salasLista.Exists(sala => sala.Id == alm.Sala.Id));
-
+            var alumnosSalas = alumnosLogica.FindAll(alumno => salasLista.Exists(sala => sala.Id == alumno.Sala.Id));
 
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
@@ -142,7 +165,6 @@ namespace Servicios
                     alumno.Notas.ToList().Add(notaMap);
                     Archivo.Instancia.Guardar(alumno);
                 }
-
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
@@ -240,7 +262,7 @@ namespace Servicios
             var resultado = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resultado.EsValido)
             {
-                var padreLogica = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == padre.Id);
+                var padreLogica = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == padre.Id && x.Eliminado == false);
                 padreLogica.Hijos.ToList().RemoveAll(hij => hij.Id == hijo.Id);
                 Archivo.Instancia.Guardar(padreLogica);
             }
@@ -262,7 +284,7 @@ namespace Servicios
                 {
                     foreach (var item in padres)
                     {
-                        LogicaHijo hije = item.Hijos.Where(x => x.Id == id).FirstOrDefault();
+                        LogicaHijo hije = item.Hijos.Where(x => x.Id == id && x.Eliminado == false).FirstOrDefault();
                         if (hije != null)
                         {
                             List<LogicaHijo> hijos = item.Hijos.ToList();
@@ -293,11 +315,11 @@ namespace Servicios
             {
                 var directoraMapeada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
                 var directoras = Archivo.Instancia.Leer<LogicaDirectora>();
-                var directoraEncontrada = directoras.Find(dir => dir.Id == id);
+                var directoraEncontrada = directoras.Find(dir => dir.Id == id && dir.Eliminado == false);
                 if (directoraEncontrada != null)
                 {
                     directoraEncontrada.Eliminado = true;
-                    Archivo.Instancia.Guardar(directoraEncontrada);
+                    Archivo.Instancia.Guardar(directoraEncontrada); // TODO > editar no guarda registros duplicados
                     Archivo.Instancia.Guardar(directoraMapeada);
                 }
                 else
@@ -321,7 +343,7 @@ namespace Servicios
             {
                 var docenteMapeada = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
                 var docentes = Archivo.Instancia.Leer<LogicaDirectora>();
-                var docenteEncontrada = docentes.Find(x => x.Id == id);
+                var docenteEncontrada = docentes.Find(x => x.Id == id && x.Eliminado == false);
                 if (docenteEncontrada != null)
                 {
                     docenteEncontrada.Eliminado = true;
@@ -349,7 +371,7 @@ namespace Servicios
             {
                 var padreMapeado = AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(padre);
                 var padres = Archivo.Instancia.Leer<LogicaPadre>();
-                var padreEncontrado = padres.Find(x => x.Id == id);
+                var padreEncontrado = padres.Find(x => x.Id == id && x.Eliminado == false);
                 if (padreEncontrado != null)
                 {
                     padreEncontrado.Eliminado = true;
@@ -377,7 +399,7 @@ namespace Servicios
                 resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
             else
             {
-                LogicaHijo alumnoSeleccionado = Alumno.Find(x => x.Id == id);
+                LogicaHijo alumnoSeleccionado = Alumno.Find(x => x.Id == id && x.Eliminado == false);
                 if (alumnoSeleccionado == null)
                     resul.Errores.Add("Error 404: Alumno no encontrado en la base de datos.");
             }
@@ -397,7 +419,7 @@ namespace Servicios
                 resul.Errores.Add("Error 404: Directora no encontrado en la base de datos.");
             else
             {
-                LogicaDirectora directoraSeleccionado = Directora.Find(x => x.Id == id);
+                LogicaDirectora directoraSeleccionado = Directora.Find(x => x.Id == id && x.Eliminado == false);
                 if (directoraSeleccionado == null)
                     resul.Errores.Add("Error 404: Directora no encontrado en la base de datos.");
             }
@@ -417,7 +439,7 @@ namespace Servicios
                 resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
             else
             {
-                LogicaDocente docenteSeleccionado = Docente.Find(x => x.Id == id);
+                LogicaDocente docenteSeleccionado = Docente.Find(x => x.Id == id && x.Eliminado == false);
                 if (docenteSeleccionado == null)
                     resul.Errores.Add("Error 404: Docente no encontrado en la base de datos.");
             }
@@ -437,7 +459,7 @@ namespace Servicios
                 resul.Errores.Add("Error 404: Padre no encontrado en la base de datos.");
             else
             {
-                LogicaPadre padreSeleccionado = Padre.Find(x => x.Id == id);
+                LogicaPadre padreSeleccionado = Padre.Find(x => x.Id == id && x.Eliminado == false);
                 if (padreSeleccionado == null)
                     resul.Errores.Add("Error 404: Padre no encontrado en la base de datos.");
             }
@@ -465,7 +487,7 @@ namespace Servicios
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            LogicaHijo alumno = Archivo.Instancia.Leer<LogicaHijo>().Where(x => x.Id == id).FirstOrDefault();
+            LogicaHijo alumno = Archivo.Instancia.Leer<LogicaHijo>().Where(x => x.Id == id && x.Eliminado == false).FirstOrDefault();
             var alumnoo = AutoMapper.Instancia.Mapear<LogicaHijo, Hijo>(alumno);
             return alumnoo;
         }
@@ -479,7 +501,7 @@ namespace Servicios
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Hijo>()
                 {
-                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista)
+                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista.FindAll(x => x.Eliminado == false))
                     .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                     .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
                     CantidadLogicaUsuario = lista.Count()
@@ -496,8 +518,8 @@ namespace Servicios
             List<Nota> notas = new List<Nota>();
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                var directora = Archivo.Instancia.Leer<LogicaDirectora>().Find(x => x.Id == idPersona);
-                var alumnos = Archivo.Instancia.Leer<LogicaHijo>().FindAll(alm => alm.Institucion == directora.Institucion);
+                var directora = Archivo.Instancia.Leer<LogicaDirectora>().Find(x => x.Id == idPersona && x.Eliminado == false);
+                var alumnos = Archivo.Instancia.Leer<LogicaHijo>().FindAll(alm => alm.Institucion == directora.Institucion && alm.Eliminado == false);
                 foreach (var alumno in alumnos)
                 {
                     var notasALM = alumno.Notas.ToList();
@@ -508,10 +530,10 @@ namespace Servicios
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Docente)
             {
-                var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Id == idPersona);
+                var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Id == idPersona && x.Eliminado == false);
                 var salasDocente = docente.Salas.ToList();
-                var alumnosDocente = Archivo.Instancia.Leer<LogicaHijo>().
-                    FindAll(alm => salasDocente.Exists(sala => sala.Id == alm.Sala.Id)); //ver si funciona
+                var alumnosDocente = Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => x.Eliminado == false).
+                    FindAll(alm => salasDocente.Exists(sala => sala.Id == alm.Sala.Id)); // TODO > ver si funciona
 
                 foreach (var alumno in alumnosDocente)
                 {
@@ -523,7 +545,7 @@ namespace Servicios
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
-                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == idPersona);
+                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Id == idPersona && x.Eliminado == false);
                 foreach (var hijo in padre.Hijos)
                 {
                     var notasALM = hijo.Notas.ToList();
@@ -538,7 +560,7 @@ namespace Servicios
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
 
-            LogicaDirectora directora = Archivo.Instancia.Leer<LogicaDirectora>().Where(x => x.Id == id).FirstOrDefault();
+            LogicaDirectora directora = Archivo.Instancia.Leer<LogicaDirectora>().Where(x => x.Id == id && x.Eliminado == false).FirstOrDefault();
             var directoraa = AutoMapper.Instancia.Mapear<LogicaDirectora, Directora>(directora);
             return directoraa;
         }
@@ -548,7 +570,7 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>();
+                List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>().FindAll(x => x.Eliminado == false);
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Directora>()
                 {
@@ -567,7 +589,7 @@ namespace Servicios
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
 
-            LogicaDocente docente = Archivo.Instancia.Leer<LogicaDocente>().Where(x => x.Id == id).FirstOrDefault();
+            LogicaDocente docente = Archivo.Instancia.Leer<LogicaDocente>().Where(x => x.Id == id && x.Eliminado == false).FirstOrDefault();
             var docentee = AutoMapper.Instancia.Mapear<LogicaDocente, Docente>(docente);
             return docentee;
 
@@ -578,7 +600,7 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>();
+                List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>().FindAll(x => x.Eliminado == false);
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Docente>()
                 {
@@ -598,7 +620,7 @@ namespace Servicios
         {
             // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netcore-3.1
             // ver la clase institucion para ver los criterios de igualdad
-            var listaDirectoras = Archivo.Instancia.Leer<LogicaDirectora>();
+            var listaDirectoras = Archivo.Instancia.Leer<LogicaDirectora>().FindAll(x => x.Eliminado == false);
             var listaInstituciones = listaDirectoras.Select(x => x.Institucion);
             return AutoMapper.Instancia.ConvertirLista<LogicaInstitucion, Institucion>(listaInstituciones.Distinct().ToList()).ToArray();
         }
@@ -617,20 +639,28 @@ namespace Servicios
 
             //List<LogicaInstitucion> _instituciones = new List<LogicaInstitucion>()
             //{
-            //new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
-            //new LogicaInstitucion(){ Id = 2, Ciudad = "Rafaela", Direccion = "Cosettini 403", Nombre = "San Jose", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Ituzaingo 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //new LogicaInstitucion(){ Id = 2, Ciudad = "Rafaela", Direccion = "Colon 403", Nombre = "San Jose", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //new LogicaInstitucion(){ Id = 3, Ciudad = "Rafaela", Direccion = "Saavedra 403", Nombre = "Normal", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //};
+
+            //List<LogicaSala> _salas = new List<LogicaSala>()
+            //{
+            //    new LogicaSala(){ Id = 1, Nombre = "LogicaSala 1" },
+            //    new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" },
+            //    new LogicaSala(){ Id = 3, Nombre = "LogicaSala 3" },
             //};
 
             //List<LogicaDocente> _docentes = new List<LogicaDocente>()
             //{
-            //new LogicaDocente(){ Id = 13, Nombre = "D 1", Apellido ="DA 1", Eliminado = false, IdInstitucion = 1, Email = "DE 1"},new LogicaDocente(){ Id = 14, Nombre = "D 2", Apellido ="DA 2", Eliminado = false, IdInstitucion = 1, Email = "DE 2"},
-            //new LogicaDocente(){ Id = 15, Nombre = "D 3", Apellido ="DA 3", Eliminado = false, IdInstitucion = 1, Email = "DE 3"},new LogicaDocente(){ Id = 16, Nombre = "D 4", Apellido ="DA 4", Eliminado = false, IdInstitucion = 1, Email = "DE 4"},
-            //new LogicaDocente(){ Id = 17, Nombre = "D 5", Apellido ="DA 5", Eliminado = false, IdInstitucion = 1, Email = "DE 5"},new LogicaDocente(){ Id = 18, Nombre = "D 6", Apellido ="DA 6", Eliminado = false, IdInstitucion = 1, Email = "DE 6"},
-            //new LogicaDocente(){ Id = 19, Nombre = "D 7", Apellido ="DA 7", Eliminado = false, IdInstitucion = 1, Email = "DE 7"},new LogicaDocente(){ Id = 20, Nombre = "D 8", Apellido ="DA 8", Eliminado = false, IdInstitucion = 1, Email = "DE 8"},
-            //new LogicaDocente(){ Id = 21, Nombre = "D 9", Apellido ="DA 9", Eliminado = false, IdInstitucion = 2, Email = "DE 9"},new LogicaDocente(){ Id = 22, Nombre = "D 10", Apellido ="DA 10", Eliminado = false, IdInstitucion = 2, Email = "DE 10"},
-            //new LogicaDocente(){ Id = 23, Nombre = "D 11", Apellido ="DA 11", Eliminado = false, IdInstitucion = 2, Email = "DE 11"},new LogicaDocente(){ Id = 24, Nombre = "D 12", Apellido ="DA 12", Eliminado = false, IdInstitucion = 2, Email = "DE 12"},
-            //new LogicaDocente(){ Id = 25, Nombre = "D 13", Apellido ="DA 13", Eliminado = false, IdInstitucion = 2, Email = "DE 13"},new LogicaDocente(){ Id = 26, Nombre = "D 14", Apellido ="DA 14", Eliminado = false, IdInstitucion = 2, Email = "DE 14"},
-            //new LogicaDocente(){ Id = 27, Nombre = "D 15", Apellido ="DA 15", Eliminado = false, IdInstitucion = 2, Email = "DE 15"},new LogicaDocente(){ Id = 28, Nombre = "D 16", Apellido ="DA 16", Eliminado = false, IdInstitucion = 2, Email = "DE 16"},
+            //new LogicaDocente(){ Id = 13, Nombre = "D 1", Apellido ="DA 1", Eliminado = false, IdInstitucion = 1, Email = "DE 1",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] }},new LogicaDocente(){ Id = 14, Nombre = "D 2", Apellido ="DA 2", Eliminado = false, IdInstitucion = 1, Email = "DE 2", Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] } },
+            //new LogicaDocente(){ Id = 15, Nombre = "D 3", Apellido ="DA 3", Eliminado = false, IdInstitucion = 1, Email = "DE 3",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] }},new LogicaDocente(){ Id = 16, Nombre = "D 4", Apellido ="DA 4", Eliminado = false, IdInstitucion = 1, Email = "DE 4",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] }},
+            //new LogicaDocente(){ Id = 17, Nombre = "D 5", Apellido ="DA 5", Eliminado = false, IdInstitucion = 1, Email = "DE 5",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] }},new LogicaDocente(){ Id = 18, Nombre = "D 6", Apellido ="DA 6", Eliminado = false, IdInstitucion = 1, Email = "DE 6",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[0] }},
+            //new LogicaDocente(){ Id = 19, Nombre = "D 7", Apellido ="DA 7", Eliminado = false, IdInstitucion = 1, Email = "DE 7",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[1] }},new LogicaDocente(){ Id = 20, Nombre = "D 8", Apellido ="DA 8", Eliminado = false, IdInstitucion = 1, Email = "DE 8",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[1] }},
+            //new LogicaDocente(){ Id = 21, Nombre = "D 9", Apellido ="DA 9", Eliminado = false, IdInstitucion = 2, Email = "DE 9",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[1] }},new LogicaDocente(){ Id = 22, Nombre = "D 10", Apellido ="DA 10", Eliminado = false, IdInstitucion = 2, Email = "DE 10",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[1] }},
+            //new LogicaDocente(){ Id = 23, Nombre = "D 11", Apellido ="DA 11", Eliminado = false, IdInstitucion = 2, Email = "DE 11",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},new LogicaDocente(){ Id = 24, Nombre = "D 12", Apellido ="DA 12", Eliminado = false, IdInstitucion = 2, Email = "DE 12",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},
+            //new LogicaDocente(){ Id = 25, Nombre = "D 13", Apellido ="DA 13", Eliminado = false, IdInstitucion = 2, Email = "DE 13",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},new LogicaDocente(){ Id = 26, Nombre = "D 14", Apellido ="DA 14", Eliminado = false, IdInstitucion = 2, Email = "DE 14",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},
+            //new LogicaDocente(){ Id = 27, Nombre = "D 15", Apellido ="DA 15", Eliminado = false, IdInstitucion = 2, Email = "DE 15",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},new LogicaDocente(){ Id = 28, Nombre = "D 16", Apellido ="DA 16", Eliminado = false, IdInstitucion = 2, Email = "DE 16",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},
             //};
 
             //List<LogicaNota> _notas1 = new List<LogicaNota>()
@@ -659,25 +689,18 @@ namespace Servicios
 
             //List<LogicaHijo> _alumnos = new List<LogicaHijo>()
             //{
-            //new LogicaHijo(){ Id = 33, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() },
-            //new LogicaHijo(){ Id = 34, Nombre = "AL 2", Apellido="AP 2", IdInstitucion = 1, Eliminado = false, Email="APE 2", FechaNacimiento = new DateTime(1991,3,20), ResultadoUltimaEvaluacionAnual = 6, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas2.ToArray()},
-            //new LogicaHijo(){ Id = 35, Nombre = "AL 3", Apellido="AP 3", IdInstitucion = 2, Eliminado = false, Email="APE 3", FechaNacimiento = new DateTime(1992,12,14), ResultadoUltimaEvaluacionAnual = 5, Sala = new LogicaSala(){ Id = 2 }, Notas = _notas3.ToArray()},
-            //new LogicaHijo(){ Id = 36, Nombre = "AL 4", Apellido="AP 4", IdInstitucion = 2, Eliminado = false, Email="APE 4", FechaNacimiento = new DateTime(1989,11,29), ResultadoUltimaEvaluacionAnual = 3, Sala = new LogicaSala(){ Id = 3 }, Notas = _notas4.ToArray()},
-            //};
-
-            //List<LogicaSala> _salas = new List<LogicaSala>()
-            //{
-            //    new LogicaSala(){ Id = 1, Nombre = "LogicaSala 1" },
-            //    new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" },
-            //    new LogicaSala(){ Id = 3, Nombre = "LogicaSala 3" },
+            //new LogicaHijo(){ Id = 33, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1, Nombre = "LogicaSala 1" }, Notas = _notas1.ToArray() },
+            //new LogicaHijo(){ Id = 34, Nombre = "AL 2", Apellido="AP 2", IdInstitucion = 1, Eliminado = false, Email="APE 2", FechaNacimiento = new DateTime(1991,3,20), ResultadoUltimaEvaluacionAnual = 6, Sala = new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" }, Notas = _notas2.ToArray()},
+            //new LogicaHijo(){ Id = 35, Nombre = "AL 3", Apellido="AP 3", IdInstitucion = 2, Eliminado = false, Email="APE 3", FechaNacimiento = new DateTime(1992,12,14), ResultadoUltimaEvaluacionAnual = 5, Sala = new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" }, Notas = _notas3.ToArray()},
+            //new LogicaHijo(){ Id = 36, Nombre = "AL 4", Apellido="AP 4", IdInstitucion = 2, Eliminado = false, Email="APE 4", FechaNacimiento = new DateTime(1989,11,29), ResultadoUltimaEvaluacionAnual = 3, Sala = new LogicaSala(){ Id = 3,Nombre = "LogicaSala 3" }, Notas = _notas4.ToArray()},
             //};
 
             //List<LogicaPadre> _padres = new List<LogicaPadre>()
             //{
-            //new LogicaPadre(){ Id = 29, Nombre = "P 1", Apellido = "PA 1", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 1"},
-            //new LogicaPadre(){ Id = 30, Nombre = "P 2", Apellido = "PA 2", Eliminado = false, Hijos = new LogicaHijo[] { }, IdInstitucion = 1, Email = "PE 2", Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre },
-            //new LogicaPadre(){ Id = 31, Nombre = "P 3", Apellido = "PA 3", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 1, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1 }, Notas = _notas1.ToArray() } }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 3"},
-            //new LogicaPadre(){ Id = 32, Nombre = "P 4", Apellido = "PA 4", Eliminado = false, Hijos = new LogicaHijo[] { }, IdInstitucion = 2, Email = "PE 4"},
+            //new LogicaPadre(){ Id = 29, Nombre = "P 1", Apellido = "PA 1", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 33, Nombre = "AL 1", Apellido="AP 1", IdInstitucion = 1, Eliminado = false, Email="APE 1", FechaNacimiento = new DateTime(1990,5,4), ResultadoUltimaEvaluacionAnual = 10, Sala = new LogicaSala(){ Id = 1, Nombre = "LogicaSala 1" }, Notas = _notas1.ToArray() }, }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 1"},
+            //new LogicaPadre(){ Id = 30, Nombre = "P 2", Apellido = "PA 2", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 34, Nombre = "AL 2", Apellido="AP 2", IdInstitucion = 1, Eliminado = false, Email="APE 2", FechaNacimiento = new DateTime(1991,3,20), ResultadoUltimaEvaluacionAnual = 6, Sala = new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" }, Notas = _notas2.ToArray()}, }, IdInstitucion = 1, Email = "PE 2", Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre },
+            //new LogicaPadre(){ Id = 31, Nombre = "P 3", Apellido = "PA 3", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 35, Nombre = "AL 3", Apellido="AP 3", IdInstitucion = 2, Eliminado = false, Email="APE 3", FechaNacimiento = new DateTime(1992,12,14), ResultadoUltimaEvaluacionAnual = 5, Sala = new LogicaSala(){ Id = 2, Nombre = "LogicaSala 2" }, Notas = _notas3.ToArray()}, }, Password = "123", Roles = new Roles[] { Roles.Padre }, RolSeleccionado = Roles.Padre, IdInstitucion = 1, Email = "PE 3"},
+            //new LogicaPadre(){ Id = 32, Nombre = "P 4", Apellido = "PA 4", Eliminado = false, Hijos = new LogicaHijo[] { new LogicaHijo(){ Id = 36, Nombre = "AL 4", Apellido="AP 4", IdInstitucion = 2, Eliminado = false, Email="APE 4", FechaNacimiento = new DateTime(1989,11,29), ResultadoUltimaEvaluacionAnual = 3, Sala = new LogicaSala(){ Id = 3,Nombre = "LogicaSala 3" }, Notas = _notas4.ToArray()}, }, IdInstitucion = 2, Email = "PE 4"},
             //};
 
             ////_directoras.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(x)));
@@ -688,10 +711,11 @@ namespace Servicios
             //////_salas.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Sala, LogicaSala>(x)));
 
             //_directoras.ForEach(x => Archivo.Instancia.Guardar(x));
+            //_salas.ForEach(x => Archivo.Instancia.Guardar(x));
             //_docentes.ForEach(x => Archivo.Instancia.Guardar(x));
             //_padres.ForEach(x => Archivo.Instancia.Guardar(x));
             //_instituciones.ForEach(x => Archivo.Instancia.Guardar(x));
-            ////_notas1.ForEach(x => Archivo.Instancia.Guardar());
+            //_notas1.ForEach(x => Archivo.Instancia.Guardar());
             //_alumnos.ForEach(x => Archivo.Instancia.Guardar(x));
 
 
@@ -700,7 +724,7 @@ namespace Servicios
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            LogicaPadre padre = Archivo.Instancia.Leer<LogicaPadre>().Where(x => x.Id == id).FirstOrDefault();
+            LogicaPadre padre = Archivo.Instancia.Leer<LogicaPadre>().Where(x => x.Id == id && x.Eliminado == false).FirstOrDefault();
             var padree = AutoMapper.Instancia.Mapear<LogicaPadre, Padre>(padre);
             return padree;
         }
@@ -710,7 +734,7 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>();
+                List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>().FindAll(x => x.Eliminado == false);
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Padre>()
                 {
@@ -729,10 +753,10 @@ namespace Servicios
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
-            var institucionUsuario = Archivo.Instancia.Leer<LogicaUsuario>().First(x => x.Email == usuarioLogueado.Email).IdInstitucion; // encuentro la institucion del usuario
+            var institucionUsuario = Archivo.Instancia.Leer<LogicaUsuario>().First(x => x.Email == usuarioLogueado.Email && x.Eliminado == false).IdInstitucion; // encuentro la institucion del usuario
             if (resul.EsValido)
                 return AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(
-                    Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => x.IdInstitucion == institucionUsuario)) // retorno los alumnos que estan en la institucion
+                    Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => x.IdInstitucion == institucionUsuario && x.Eliminado == false)) // retorno los alumnos que estan en la institucion
                     .ToArray();
             else
                 return new Hijo[] { };
@@ -742,7 +766,7 @@ namespace Servicios
         {
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                List<LogicaSala> salas = Archivo.Instancia.Leer<LogicaSala>();
+                List<LogicaSala> salas = Archivo.Instancia.Leer<LogicaSala>().FindAll(x => x.Eliminado == false);
                 if (salas == null)
                     return new Sala[0];
                 else
@@ -755,8 +779,12 @@ namespace Servicios
             {
                 if (usuarioLogueado.RolSeleccionado == Roles.Docente)
                 {
-                    LogicaDocente docent = Archivo.Instancia.Leer<LogicaDocente>().Where(x => x.Nombre == usuarioLogueado.Nombre && x.Apellido == usuarioLogueado.Apellido &&
-                        x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    LogicaDocente docent = Archivo.Instancia.Leer<LogicaDocente>().Where(
+                        x => x.Nombre == usuarioLogueado.Nombre && 
+                        x.Apellido == usuarioLogueado.Apellido &&
+                        x.Email == usuarioLogueado.Email && 
+                        x.Eliminado == false)
+                        .FirstOrDefault();
                     List<LogicaSala> listasalas = docent.Salas.ToList();
                     var listasalass = AutoMapper.Instancia.Mapear<List<LogicaSala>, List<Sala>>(listasalas);
                     return listasalass.ToArray();
@@ -770,14 +798,15 @@ namespace Servicios
         {
             return AutoMapper.Instancia.Mapear<LogicaUsuario, UsuarioLogueado>(Archivo.Instancia.Leer<LogicaUsuario>().Find(x =>
                                                                                 x.Email == email &&
-                                                                                x.Password == clave));
+                                                                                x.Password == clave &&
+                                                                                x.Eliminado == false));
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             var notaLogica = AutoMapper.Instancia.Mapear<Nota, LogicaNota>(nota);
-            var alumno = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Notas.Contains(notaLogica));
+            var alumno = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Notas.Contains(notaLogica) && x.Eliminado == false);
             if (resul.EsValido)
             {
                 if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email))
@@ -793,7 +822,7 @@ namespace Servicios
             {
                 if ((int)usuarioLogueado.RolSeleccionado == 2)
                 {
-                    var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Email == usuarioLogueado.Email);
+                    var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
                     if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email) && docente.Salas.Contains(alumno.Sala)) // si van a la misma institucion y a la misma sala
                     {
                         var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
@@ -806,7 +835,7 @@ namespace Servicios
 
                 if ((int)usuarioLogueado.RolSeleccionado == 0)
                 {
-                    var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email);
+                    var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
                     if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email) && padre.Hijos.ToList().Contains(alumno)) // si es su hijo
                     {
                         var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);

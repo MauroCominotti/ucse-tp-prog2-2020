@@ -39,8 +39,8 @@ namespace Servicios
                 cfg.CreateMap<UsuarioLogueado, LogicaUsuario>(MemberList.Source);
                 cfg.CreateMap<LogicaInstitucion, Institucion>(MemberList.Destination);
                 cfg.CreateMap<Institucion, LogicaInstitucion>(MemberList.Source);
-                cfg.CreateMap<LogicaSala, Sala>();
-                cfg.CreateMap<Sala, LogicaSala>();
+                cfg.CreateMap<LogicaSala, Sala>(MemberList.Destination);
+                cfg.CreateMap<Sala, LogicaSala>(MemberList.Source);
                 cfg.CreateMap<LogicaUsuario, Usuario>(MemberList.Destination);
                 cfg.CreateMap<Usuario, LogicaUsuario>(MemberList.Source); // solo los campos de Source son mapeados
                 cfg.CreateMap<LogicaPadre, Padre>(MemberList.Destination);

@@ -34,6 +34,11 @@ namespace LogicaDeNegocios
             }
         }
 
+        public EventHandler eventoAlta;
+        public EventHandler eventoBaja;
+        public EventHandler eventoModificacion;
+        public EventHandler eventoLectura; 
+
         //Buscar en Archivos //////////////////////////////////////////////////////////////////////////////
         public List<T> Leer<T>()
         {
@@ -42,6 +47,7 @@ namespace LogicaDeNegocios
             List<T> listusu = new List<T>();
             string rutaSeleccionada = arrayRutas.First(x => x.Contains(typeof(T).Name));
             ruta = Path.Combine(carpeta, rutaSeleccionada);
+            eventoLectura(rutaSeleccionada, null);
             if (!File.Exists(ruta))
             {
                 var file = File.Create(ruta);
@@ -76,7 +82,7 @@ namespace LogicaDeNegocios
                 usuarios.AddRange(listapadre.Select(x => x as LogicaUsuario));
             if (listahijo != null)
                 usuarios.AddRange(listahijo.Select(x => x as LogicaUsuario));
-            
+
             usuarios.ForEach(x => Guardar(x));
         }
 
@@ -94,19 +100,25 @@ namespace LogicaDeNegocios
                     if (item.Id == institucion.Id)
                     {
                         if (suprimir)
-                            institucion.Eliminado = true;
-                        else
                         {
-                            listinstitucion.RemoveAt(cont);
-                            listinstitucion.Insert(cont, institucion);
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
                         }
+                        else
+                            eventoModificacion(this, null);
+                        listinstitucion.RemoveAt(cont);
+                        listinstitucion.Insert(cont, item);
+
                         ban = false;
                         break;
                     }
                     cont++;
                 }
                 if (ban)
+                {
                     listinstitucion.Add(institucion);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -118,7 +130,54 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listinstitucion);
                 escribir.Write(Serializar);
-                
+
+            }
+        }
+
+        public void Guardar(LogicaSala sala, bool suprimir = false)
+        {
+            string rutaarchivo = Path.Combine(carpeta, LogicaSala);
+            List<LogicaSala> listsala = new List<LogicaSala>();
+            listsala = Leer<LogicaSala>();
+            int cont = 0; bool ban = true;
+            if (listsala != null)
+            {
+                foreach (var item in listsala)
+                {
+                    if (item.Id == sala.Id)
+                    {
+                        if (suprimir)
+                        {
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
+                        }
+                        else
+                            eventoModificacion(this, null);
+                        listsala.RemoveAt(cont);
+                        listsala.Insert(cont, item);
+
+                        ban = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (ban)
+                {
+                    listsala.Add(sala);
+                    eventoAlta(this, null);
+                }
+            }
+            else
+            {
+                listsala = new List<LogicaSala>();
+                listsala.Add(sala);
+            }
+
+            using (StreamWriter escribir = new StreamWriter(rutaarchivo, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listsala);
+                escribir.Write(Serializar);
+
             }
         }
 
@@ -135,19 +194,25 @@ namespace LogicaDeNegocios
                     if (item.Id == usu.Id)
                     {
                         if (suprimir)
-                            usu.Eliminado = true;
-                        else
                         {
-                            listusu.RemoveAt(cont);
-                            listusu.Insert(cont, usu);
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
                         }
+                        else
+                            eventoModificacion(this, null);
+                        listusu.RemoveAt(cont);
+                        listusu.Insert(cont, item);
+
                         br = false;
                         break;
                     }
                     cont++;
                 }
                 if (br)
+                {
                     listusu.Add(usu);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -175,19 +240,25 @@ namespace LogicaDeNegocios
                     if (item.Id == doc.Id)
                     {
                         if (suprimir)
-                            doc.Eliminado = true;
-                        else
                         {
-                            listdoc.RemoveAt(cont);
-                            listdoc.Insert(cont, doc);
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
                         }
+                        else
+                            eventoModificacion(this, null);
+                        listdoc.RemoveAt(cont);
+                        listdoc.Insert(cont, item);
+
                         ban = false;
                         break;
                     }
                     cont++;
                 }
                 if (ban)
+                {
                     listdoc.Add(doc);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -216,17 +287,24 @@ namespace LogicaDeNegocios
                     if (item.Id == doc.Id)
                     {
                         if (suprimir)
-                            doc.Eliminado = true;
-
+                        {
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
+                        }
+                        else
+                            eventoModificacion(this, null);
                         listdoc.RemoveAt(cont);
-                        listdoc.Insert(cont, doc);
+                        listdoc.Insert(cont, item);
                         ban = false;
                         break;
                     }
                     cont++;
                 }
                 if (ban)
+                {
                     listdoc.Add(doc);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -238,7 +316,7 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listdoc);
                 escribir.Write(Serializar);
-                
+
             }
             ObtenerListaGeneral();
         }
@@ -256,19 +334,25 @@ namespace LogicaDeNegocios
                     if (item.Id == directivo.Id)
                     {
                         if (suprimir)
-                            directivo.Eliminado = true;
-                        else
                         {
-                            listreg.RemoveAt(cont);
-                            listreg.Insert(cont, directivo);
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
                         }
+                        else
+                            eventoModificacion(this, null);
+                        listreg.RemoveAt(cont);
+                        listreg.Insert(cont, item);
+
                         br = false;
                         break;
                     }
                     cont++;
                 }
                 if (br)
+                {
                     listreg.Add(directivo);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -279,7 +363,7 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listreg);
                 escribir.Write(Serializar);
-                
+
             }
             ObtenerListaGeneral();
         }
@@ -297,19 +381,25 @@ namespace LogicaDeNegocios
                     if (item.Id == alumno.Id)
                     {
                         if (suprimir)
-                            alumno.Eliminado = true;
-                        else
                         {
-                            listalum.RemoveAt(cont);
-                            listalum.Insert(cont, alumno);
+                            item.Eliminado = true;
+                            eventoBaja(this, null);
                         }
+                        else
+                            eventoModificacion(this, null);
+                        listalum.RemoveAt(cont);
+                        listalum.Insert(cont, item);
+
                         br = false;
                         break;
                     }
                     cont++;
                 }
                 if (br)
+                {
                     listalum.Add(alumno);
+                    eventoAlta(this, null);
+                }
             }
             else
             {
@@ -321,7 +411,7 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listalum);
                 escribir.Write(Serializar);
-                
+
             }
             ObtenerListaGeneral();
         }
