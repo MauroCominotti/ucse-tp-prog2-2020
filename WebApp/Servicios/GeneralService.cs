@@ -55,12 +55,11 @@ namespace Servicios
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-
-            bool bandera = false;
+            //bool bandera = false;
             if (!Empresa.RegistroUsuario(directora.Email)) //Directora inexistente
             {
-                bandera = true;
-                List<LogicaUsuario> usuarios = Archivo.Instancia.Leer<LogicaUsuario>();
+                //bandera = true;
+                List<LogicaUsuario> usuarios = Archivo.Instancia.Leer<LogicaUsuario>().FindAll(x => x.Eliminado == false);
                 if (usuarios != null)
                 {
                     LogicaUsuario us = usuarios.LastOrDefault();
@@ -70,9 +69,7 @@ namespace Servicios
                         directora.Id = 1;
                 }
                 else
-                {
                     directora.Id = 1;
-                }
             }
             //else //Directora existente
             //{
@@ -84,6 +81,14 @@ namespace Servicios
             if (ress.EsValido)
             {
                 var directoraCasteada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
+                var DirectoraJson = Archivo.Instancia.Leer<LogicaDirectora>().Find(x => x.Eliminado == false && x.Email == usuarioLogueado.Email);
+                directoraCasteada.Eliminado = false;
+                directoraCasteada.Password = "123";
+                directoraCasteada.Institucion = DirectoraJson.Institucion;
+                directoraCasteada.IdInstitucion = DirectoraJson.IdInstitucion;
+                directoraCasteada.RolSeleccionado = Roles.Directora;
+                directoraCasteada.Roles = new Roles[] { Roles.Directora };
+
                 Archivo.Instancia.Guardar(directoraCasteada);
                 //if (bandera)
                 //{
@@ -123,6 +128,11 @@ namespace Servicios
                 else
                 {
                     var docenteCasteado = AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(docente);
+                    docenteCasteado.Eliminado = false;
+                    docenteCasteado.Password = "123";
+                    docenteCasteado.RolSeleccionado = Roles.Docente;
+                    docenteCasteado.Roles = new Roles[] { Roles.Docente };
+                    docenteCasteado.IdInstitucion = Archivo.Instancia.Leer<LogicaDirectora>().Find(x => x.Eliminado == false && x.Email == usuarioLogueado.Email).IdInstitucion;
                     Archivo.Instancia.Guardar(docenteCasteado);
                 }
             }
@@ -317,14 +327,11 @@ namespace Servicios
 
             if (resultado.EsValido)
             {
-                var directoraMapeada = AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora);
-                var directoras = Archivo.Instancia.Leer<LogicaDirectora>();
-                var directoraEncontrada = directoras.Find(dir => dir.Id == id && dir.Eliminado == false);
+                var directoraEncontrada = Archivo.Instancia.Leer<LogicaDirectora>().FirstOrDefault(x => x.Eliminado == false && x.Id == id);
                 if (directoraEncontrada != null)
                 {
-                    directoraEncontrada.Eliminado = true;
-                    Archivo.Instancia.Guardar(directoraEncontrada); // TODO > editar no guarda registros duplicados
-                    Archivo.Instancia.Guardar(directoraMapeada);
+                    /*Archivo.Instancia.Guardar(directoraEncontrada);*/ // TODO > editar no guarda registros duplicados
+                    Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(directora));
                 }
                 else
                 {
@@ -501,14 +508,15 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaHijo> lista = Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => Empresa.MismaInstitucion(x.Id, usuarioLogueado.Email));
+                List<LogicaHijo> lista = Archivo.Instancia.Leer<LogicaHijo>().FindAll(x => x.Eliminado == false && x.IdInstitucion == Empresa.IDInstitucionUsuarioLogueado(usuarioLogueado.Email));
+                var listaADevolver = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista.FindAll(x => x.Eliminado == false))
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Hijo>()
                 {
-                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaHijo, Hijo>(lista.FindAll(x => x.Eliminado == false))
-                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                    CantidadLogicaUsuario = lista.Count()
+                    Lista = listaADevolver,
+                    CantidadLogicaUsuario = listaADevolver.Count()
                 };
             }
             else
@@ -574,14 +582,15 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>().FindAll(x => Empresa.MismaInstitucion(x.Id, usuarioLogueado.Email));
+                List<LogicaDirectora> lista = Archivo.Instancia.Leer<LogicaDirectora>().FindAll(x => x.Eliminado == false && x.IdInstitucion == Empresa.IDInstitucionUsuarioLogueado(usuarioLogueado.Email));
+                var listaADevolver = AutoMapper.Instancia.ConvertirLista<LogicaDirectora, Directora>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Directora>()
                 {
-                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaDirectora, Directora>(lista)
-                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                    CantidadLogicaUsuario = lista.Count()
+                    Lista = listaADevolver,
+                    CantidadLogicaUsuario = listaADevolver.Count()
                 };
             }
             else
@@ -604,14 +613,15 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>().FindAll(x => Empresa.MismaInstitucion(x.Id, usuarioLogueado.Email));
+                List<LogicaDocente> lista = Archivo.Instancia.Leer<LogicaDocente>().FindAll(x => x.Eliminado == false && x.IdInstitucion == Empresa.IDInstitucionUsuarioLogueado(usuarioLogueado.Email));
+                var listaADevolver = AutoMapper.Instancia.ConvertirLista<LogicaDocente, Docente>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Docente>()
                 {
-                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaDocente, Docente>(lista)
-                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                    CantidadLogicaUsuario = lista.Count()
+                    Lista = listaADevolver,
+                    CantidadLogicaUsuario = listaADevolver.Count()
                 };
             }
             else
@@ -631,21 +641,21 @@ namespace Servicios
 
         public string ObtenerNombreGrupo()
         {
-            //List<LogicaDirectora> _directoras = new List<LogicaDirectora>()
-            //{
-            //new LogicaDirectora(){ Id = 1, Nombre = "A 1", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 2, Nombre = "A 2", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //new LogicaDirectora(){ Id = 3, Nombre = "A 3", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 4, Nombre = "A 4", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //new LogicaDirectora(){ Id = 5, Nombre = "A 5", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 6, Nombre = "A 6", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //new LogicaDirectora(){ Id = 7, Nombre = "A 7", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 8, Nombre = "A 8", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //new LogicaDirectora(){ Id = 9, Nombre = "A 9", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 10, Nombre = "A 10", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //new LogicaDirectora(){ Id = 11, Nombre = "A 11", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D"},new LogicaDirectora(){ Id = 12, Nombre = "A 12", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D"},
-            //};
-
             //List<LogicaInstitucion> _instituciones = new List<LogicaInstitucion>()
             //{
             //new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Ituzaingo 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
             //new LogicaInstitucion(){ Id = 2, Ciudad = "Rafaela", Direccion = "Colon 403", Nombre = "San Jose", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
             //new LogicaInstitucion(){ Id = 3, Ciudad = "Rafaela", Direccion = "Saavedra 403", Nombre = "Normal", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
+            //};
+
+            //List<LogicaDirectora> _directoras = new List<LogicaDirectora>()
+            //{
+            //new LogicaDirectora(){ Id = 1, Nombre = "A 1", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[0]},new LogicaDirectora(){ Id = 2, Nombre = "A 2", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[0]},
+            //new LogicaDirectora(){ Id = 3, Nombre = "A 3", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[0]},new LogicaDirectora(){ Id = 4, Nombre = "A 4", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[0]},
+            //new LogicaDirectora(){ Id = 5, Nombre = "A 5", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[0]},new LogicaDirectora(){ Id = 6, Nombre = "A 6", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[0]},
+            //new LogicaDirectora(){ Id = 7, Nombre = "A 7", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[0]},new LogicaDirectora(){ Id = 8, Nombre = "A 8", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[0]},
+            //new LogicaDirectora(){ Id = 9, Nombre = "A 9", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[0]},new LogicaDirectora(){ Id = 10, Nombre = "A 10", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[0]},
+            //new LogicaDirectora(){ Id = 11, Nombre = "A 11", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 1, Password = "123", Cargo = "D", Institucion = _instituciones[1]},new LogicaDirectora(){ Id = 12, Nombre = "A 12", Apellido ="B", Email = "C", Roles = new Roles[] { Roles.Directora }, RolSeleccionado = Roles.Directora, FechaIngreso = DateTime.Now, Eliminado = false, IdInstitucion = 2, Password = "123", Cargo = "D", Institucion = _instituciones[2]},
             //};
 
             //List<LogicaSala> _salas = new List<LogicaSala>()
@@ -742,14 +752,15 @@ namespace Servicios
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
             if (resul.EsValido)
             {
-                List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>().FindAll(x => Empresa.MismaInstitucion(x.Id, usuarioLogueado.Email));
+                List<LogicaPadre> lista = Archivo.Instancia.Leer<LogicaPadre>().FindAll(x => x.Eliminado == false && x.IdInstitucion == Empresa.IDInstitucionUsuarioLogueado(usuarioLogueado.Email));
+                var listaADevolver = AutoMapper.Instancia.ConvertirLista<LogicaPadre, Padre>(lista)
+                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
                 //transformar el resultado de la logica de negocios a la clase de contratos
                 return new Grilla<Padre>()
                 {
-                    Lista = AutoMapper.Instancia.ConvertirLista<LogicaPadre, Padre>(lista)
-                    .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                    .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                    CantidadLogicaUsuario = lista.Count()
+                    Lista = listaADevolver,
+                    CantidadLogicaUsuario = listaADevolver.Count()
                 };
             }
             else

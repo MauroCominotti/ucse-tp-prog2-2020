@@ -224,6 +224,7 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(usu);
                 escribir.Write(Serializar);
+                escribir.Close();
             }
         }
 
@@ -339,7 +340,14 @@ namespace LogicaDeNegocios
                             eventoBaja(this, null);
                         }
                         else
-                            eventoModificacion(this, null);
+                        {
+                            eventoModificacion(this, null); // TODO > Cambiar todo refactorizar props
+                            item.Nombre = directivo.Nombre;
+                            item.Apellido = directivo.Apellido;
+                            item.Email = directivo.Email;
+                            item.Cargo = directivo.Cargo;
+                            item.FechaIngreso = directivo.FechaIngreso;
+                        }
                         listreg.RemoveAt(cont);
                         listreg.Insert(cont, item);
 

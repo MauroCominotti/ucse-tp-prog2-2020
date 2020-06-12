@@ -53,6 +53,18 @@ namespace LogicaDeNegocios
                 return false;
             }
         }
+        public static int ? IDInstitucionUsuarioLogueado(string Email) // toma un docente, alumno, etc,(Id) y un usuario(Email)
+        {
+            try
+            {
+                int institucionDelUsuario = Archivo.Instancia.Leer<LogicaUsuario>().FirstOrDefault(x => x.Email == Email && x.Eliminado == false).IdInstitucion;
+                return institucionDelUsuario;
+            }
+            catch (Exception)
+            {
+                return 0; // no hay instituciones con id = 0, por eso se puede devolver
+            }
+        }
     }
 
 }
