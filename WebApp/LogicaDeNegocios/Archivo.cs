@@ -16,10 +16,10 @@ namespace LogicaDeNegocios
         private const string LogicaHijo = @"LogicaHijo.txt";
         private const string LogicaDocente = @"LogicaDocente.txt";
         private const string LogicaSala = @"LogicaSala.txt";
-        private const string LogicaNota = @"LogicaNota.txt";
+        //private const string LogicaNota = @"LogicaNota.txt";
         private const string LogicaInstitucion = @"LogicaInstitucion.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory; //Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, LogicaNota };
+        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala };
 
         // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
@@ -246,7 +246,31 @@ namespace LogicaDeNegocios
                             eventoBaja(this, null);
                         }
                         else
+                        {
                             eventoModificacion(this, null);
+                            item.Nombre = doc.Nombre;
+                            item.Apellido = doc.Apellido;
+                            item.Email = doc.Email;
+                            if (doc.Salas.Length != 0)
+                            {
+                                var salaDoc = Archivo.Instancia.Leer<LogicaSala>().Find(x => x.Id == doc.Salas[0].Id);
+
+                                if (item.Salas.FirstOrDefault(x => x.Id == salaDoc.Id) == null)
+                                {
+                                    var salas = new LogicaSala[item.Salas.Length + 1];
+                                    for (int i = 0; i < salas.Length; i++)
+                                    {
+                                        if (i == salas.Length - 1)
+                                            salas[i] = salaDoc;
+                                        else
+                                            salas[i] = item.Salas[i];
+                                    }
+                                    item.Salas = salas;
+                                }
+                            }
+                            else
+                                item.Salas = new LogicaSala[] { };
+                        }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
 
@@ -293,7 +317,31 @@ namespace LogicaDeNegocios
                             eventoBaja(this, null);
                         }
                         else
+                        {
                             eventoModificacion(this, null);
+                            item.Nombre = doc.Nombre;
+                            item.Apellido = doc.Apellido;
+                            item.Email = doc.Email;
+                            if (doc.Hijos.Length != 0)
+                            {
+                                var hijoDoc = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Id == doc.Hijos[0].Id);
+
+                                if (item.Hijos.FirstOrDefault(x => x.Id == hijoDoc.Id) == null)
+                                {
+                                    var hijos = new LogicaHijo[item.Hijos.Length + 1];
+                                    for (int i = 0; i < hijos.Length; i++)
+                                    {
+                                        if (i == hijos.Length - 1)
+                                            hijos[i] = hijoDoc;
+                                        else
+                                            hijos[i] = item.Hijos[i];
+                                    }
+                                    item.Hijos = hijos;
+                                }
+                            }
+                            else
+                                item.Hijos = new LogicaHijo[] { };
+                        }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
                         ban = false;
@@ -394,7 +442,16 @@ namespace LogicaDeNegocios
                             eventoBaja(this, null);
                         }
                         else
+                        {
                             eventoModificacion(this, null);
+                            item.Nombre = alumno.Nombre;
+                            item.Apellido = alumno.Apellido;
+                            item.Email = alumno.Email;
+                            item.Sala = alumno.Sala;
+                            item.Sala.IdInstitucion = item.IdInstitucion;
+                            item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
+                            item.FechaNacimiento = alumno.FechaNacimiento;
+                        }
                         listalum.RemoveAt(cont);
                         listalum.Insert(cont, item);
 
