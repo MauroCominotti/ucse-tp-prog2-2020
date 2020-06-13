@@ -130,16 +130,15 @@ namespace Servicios
                 notaMap.Id = null;
             var SalaId = salas.Select(x => x.Id).ToList();
             var alumnosSalas = alumnosLogica.FindAll(alumno => SalaId.Contains(alumno.Sala.Id));
-            Archivo.Instancia.Guardar(notaMap);
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
                 if (hijos.Length != 0)
                 {
                     foreach (var hijo in hijos)
                     {
-                        //hijo.Notas.ToList().Add(nota);
+                        Archivo.Instancia.Guardar(notaMap);
                         var hijoMap = AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(hijo);
-                        hijoMap.Notas = new LogicaNota[] { notaMap };
+                        hijoMap.Notas = new LogicaNota[] { Archivo.Instancia.Leer<LogicaNota>().Last() };
                         Archivo.Instancia.Guardar(hijoMap);
                     }
                 }
@@ -147,22 +146,27 @@ namespace Servicios
                 {
                     foreach (var alumno in alumnosSalas)
                     {
-                        alumno.Notas = new LogicaNota[] { notaMap };
+                        Archivo.Instancia.Guardar(notaMap);
+                        alumno.Notas = new LogicaNota[] { Archivo.Instancia.Leer<LogicaNota>().Last() };
                         Archivo.Instancia.Guardar(alumno);
                     }
                 }
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Docente)
             {
-                foreach (var alumno in alumnosSalas)
+                var Docente= Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
+                var SalasDocente = Docente.Salas.Select(x => x.Id).ToList();
+                var alumnosSalasDocente = alumnosSalas.FindAll(x => SalasDocente.Contains(x.Sala.Id));
+                foreach (var alumno in alumnosSalasDocente)
                 {
-                    alumno.Notas.ToList().Add(notaMap);
+                    Archivo.Instancia.Guardar(notaMap);
+                    alumno.Notas = new LogicaNota[] { Archivo.Instancia.Leer<LogicaNota>().Last() };
                     Archivo.Instancia.Guardar(alumno);
                 }
             }
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
-                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email);
+                var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
                 var hijosLogica = AutoMapper.Instancia.ConvertirLista<Hijo, LogicaHijo>(hijos.ToList());
                 var hijosPadreLogica = padre.Hijos.ToList();
                 foreach (var hijo in hijosPadreLogica)
@@ -428,9 +432,9 @@ namespace Servicios
             var resultado = new Resultado();
             if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
-                var LogicaUsuario = Archivo.Instancia.Leer<LogicaUsuario>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false && x.Nombre == usuarioLogueado.Nombre);
+                //var LogicaPadre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false && x.Nombre == usuarioLogueado.Nombre);
                 var NotaLogica = Archivo.Instancia.Leer<LogicaNota>().Find(x => x.Id == nota.Id);
-                var AlumnoLogica = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Notas.Contains(NotaLogica) && x.Eliminado == false);
+                var AlumnoLogica = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Notas.ToList().Exists(y => y.Id == NotaLogica.Id) && x.Eliminado == false);
                 NotaLogica.Leida = true; // TODO > no se actualiza la tabla en realidad
                 Archivo.Instancia.Guardar(NotaLogica);
                 AlumnoLogica.Notas.ToList().Find(x => x.Id == NotaLogica.Id).Leida = true;
@@ -606,7 +610,7 @@ namespace Servicios
 
         public string ObtenerNombreGrupo()
         {
-            // las instituciones no se pueden agregar, no hay un metodo AltaInstitucion
+            //// las instituciones no se pueden agregar, no hay un metodo AltaInstitucion
             //List<LogicaInstitucion> _instituciones = new List<LogicaInstitucion>() // institucion no tiene id=0 por Empresa.IDInstitucionUsuarioLogueado
             //{
             //new LogicaInstitucion(){ Id = 1, Ciudad = "Rafaela", Direccion = "Ituzaingo 403", Nombre = "Misericordia", Provincia = "Santa Fe", Telefono = "03492565890", Eliminado = false},
@@ -645,30 +649,30 @@ namespace Servicios
             //new LogicaDocente(){ Id = 27, Nombre = "D 15", Apellido ="DA 15", Eliminado = false, IdInstitucion = 2, Email = "DE 15",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},new LogicaDocente(){ Id = 28, Nombre = "D 16", Apellido ="DA 16", Eliminado = false, IdInstitucion = 2, Email = "DE 16",  Password = "123", Roles = new Roles[] { Roles.Docente }, RolSeleccionado = Roles.Docente, Salas = new LogicaSala[] { _salas[2] }},
             //};
 
-            List<LogicaNota> _notas1 = new List<LogicaNota>()
-            {
-            new LogicaNota(){ Id = 0, Leida = false, Titulo= "LogicaNota 0", Descripcion = "Descripcion de la nota 0", Comentarios = new LogicaComentario[]{ } },
-            new LogicaNota(){ Id = 1, Leida = false, Titulo= "LogicaNota 1", Descripcion = "Descripcion de la nota 1", Comentarios = new LogicaComentario[]{ } },
-            new LogicaNota(){ Id = 2, Leida = false, Titulo= "LogicaNota 2", Descripcion = "Descripcion de la nota 2", Comentarios = new LogicaComentario[]{
-                new LogicaComentario() { Fecha = DateTime.Now.AddDays(-2), Mensaje = "LogicaComentario 1" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera" } },
-                new LogicaComentario() { Fecha = DateTime.Now.AddDays(-1), Mensaje = "LogicaComentario 2" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera 2" } },
-                } }
-            };
+            //List<LogicaNota> _notas1 = new List<LogicaNota>()
+            //{
+            //new LogicaNota(){ Id = 0, Leida = false, Titulo= "LogicaNota 0", Descripcion = "Descripcion de la nota 0", Comentarios = new LogicaComentario[]{ } },
+            //new LogicaNota(){ Id = 1, Leida = false, Titulo= "LogicaNota 1", Descripcion = "Descripcion de la nota 1", Comentarios = new LogicaComentario[]{ } },
+            //new LogicaNota(){ Id = 2, Leida = false, Titulo= "LogicaNota 2", Descripcion = "Descripcion de la nota 2", Comentarios = new LogicaComentario[]{
+            //    new LogicaComentario() { Fecha = DateTime.Now.AddDays(-2), Mensaje = "LogicaComentario 1" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera" } },
+            //    new LogicaComentario() { Fecha = DateTime.Now.AddDays(-1), Mensaje = "LogicaComentario 2" , Usuario = new LogicaUsuario(){ Nombre = "Usuario", Apellido="Cualquiera 2" } },
+            //    } }
+            //};
 
-            List<LogicaNota> _notas2 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 3, Leida = true, Titulo= "LogicaNota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas2 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 3, Leida = true, Titulo= "LogicaNota 3", Descripcion = "Descripcion de la nota 3", Comentarios = new LogicaComentario[]{ } },
+            //};
 
-            List<LogicaNota> _notas3 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 4, Leida = false, Titulo= "LogicaNota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas3 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 4, Leida = false, Titulo= "LogicaNota 4", Descripcion = "Descripcion de la nota 4", Comentarios = new LogicaComentario[]{ } },
+            //};
 
-            List<LogicaNota> _notas4 = new List<LogicaNota>()
-            {
-                new LogicaNota(){ Id = 5, Leida = true, Titulo= "LogicaNota 5", Descripcion = "Descripcion de la nota 5", Comentarios = new LogicaComentario[]{ } },
-            };
+            //List<LogicaNota> _notas4 = new List<LogicaNota>()
+            //{
+            //    new LogicaNota(){ Id = 5, Leida = true, Titulo= "LogicaNota 5", Descripcion = "Descripcion de la nota 5", Comentarios = new LogicaComentario[]{ } },
+            //};
 
             //List<LogicaHijo> _alumnos = new List<LogicaHijo>()
             //{
@@ -691,12 +695,12 @@ namespace Servicios
             //new LogicaPadre(){ Id = 41, Nombre = "P 5", Apellido = "PA 5", Eliminado = false, Hijos = new LogicaHijo[] { _alumnos[4] }, IdInstitucion = 2, Email = "PE 4"},
             //};
 
-            ////_directoras.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(x)));
-            ////_docentes.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(x)));
-            ////_padres.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(x)));
-            //////_notas1.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Nota, LogicaNota>(x)));
-            ////_alumnos.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(x)));
-            //////_salas.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Sala, LogicaSala>(x)));
+            //_directoras.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Directora, LogicaDirectora>(x)));
+            //_docentes.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Docente, LogicaDocente>(x)));
+            //_padres.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Padre, LogicaPadre>(x)));
+            ////_notas1.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Nota, LogicaNota>(x)));
+            //_alumnos.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Hijo, LogicaHijo>(x)));
+            ////_salas.ForEach(x => Archivo.Instancia.Guardar(AutoMapper.Instancia.Mapear<Sala, LogicaSala>(x)));
 
             //_directoras.ForEach(x => Archivo.Instancia.Guardar(x));
             //_salas.ForEach(x => Archivo.Instancia.Guardar(x));
@@ -812,13 +816,13 @@ namespace Servicios
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
             Resultado resul = Empresa.PermisosDirectora(usuarioLogueado.RolSeleccionado, usuarioLogueado);
-            var notaLogica = AutoMapper.Instancia.Mapear<Nota, LogicaNota>(nota);
+            var notaLogica = Archivo.Instancia.Leer<LogicaNota>().Find(x => x.Id == nota.Id);
             var alumno = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Notas.Contains(notaLogica) && x.Eliminado == false);
+            var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
             if (resul.EsValido)
             {
                 if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email))
                 {
-                    var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
                     alumno.Notas.ToList().Find(x => x == notaLogica).Comentarios.ToList().Add(nuevoComentarioLogica);
                     Archivo.Instancia.Guardar(alumno);
                 }
@@ -832,8 +836,7 @@ namespace Servicios
                     var docente = Archivo.Instancia.Leer<LogicaDocente>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
                     if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email) && docente.Salas.Contains(alumno.Sala)) // si van a la misma institucion y a la misma sala
                     {
-                        var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
-                        alumno.Notas.ToList().Find(x => x == notaLogica).Comentarios.ToList().Add(nuevoComentarioLogica);
+                        alumno.Notas.ToList().Find(x => x == notaLogica).Comentarios = new LogicaComentario[] { nuevoComentarioLogica };
                         Archivo.Instancia.Guardar(alumno);
                     }
                     else
@@ -845,8 +848,7 @@ namespace Servicios
                     var padre = Archivo.Instancia.Leer<LogicaPadre>().Find(x => x.Email == usuarioLogueado.Email && x.Eliminado == false);
                     if (Empresa.MismaInstitucion(alumno.Id, usuarioLogueado.Email) && padre.Hijos.ToList().Contains(alumno)) // si es su hijo
                     {
-                        var nuevoComentarioLogica = AutoMapper.Instancia.Mapear<Comentario, LogicaComentario>(nuevoComentario);
-                        alumno.Notas.ToList().Find(x => x == notaLogica).Comentarios.ToList().Add(nuevoComentarioLogica);
+                        alumno.Notas.ToList().Find(x => x == notaLogica).Comentarios = new LogicaComentario[] { nuevoComentarioLogica };
                         Archivo.Instancia.Guardar(alumno);
                     }
                     else

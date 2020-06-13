@@ -443,7 +443,7 @@ namespace LogicaDeNegocios
                         else
                         {
                             eventoModificacion(this, null);
-                            if (alumno.Notas.Length != 0) // siempre va a ser cero salvo que venga por AltaNota
+                            if (alumno.Notas.Length != 0 && item.Notas.FirstOrDefault(x => x.Id == alumno.Notas[0].Id) == null) // siempre va a ser cero salvo que venga por AltaNota
                             {
                                 var notaAlumno = Instancia.Leer<LogicaNota>().Find(x => x.Id == alumno.Notas[0].Id);
 
@@ -462,6 +462,7 @@ namespace LogicaDeNegocios
                             }
                             else
                             {
+                                item.Notas = alumno.Notas;
                                 item.Nombre = alumno.Nombre;
                                 item.Apellido = alumno.Apellido;
                                 item.Email = alumno.Email;
