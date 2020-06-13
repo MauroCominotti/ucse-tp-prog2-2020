@@ -16,10 +16,10 @@ namespace LogicaDeNegocios
         private const string LogicaHijo = @"LogicaHijo.txt";
         private const string LogicaDocente = @"LogicaDocente.txt";
         private const string LogicaSala = @"LogicaSala.txt";
-        //private const string LogicaNota = @"LogicaNota.txt";
+        private const string LogicaNota = @"LogicaNota.txt";
         private const string LogicaInstitucion = @"LogicaInstitucion.txt";
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory; //Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
-        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala };
+        private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, LogicaNota };
 
         // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace LogicaDeNegocios
         public EventHandler eventoAlta;
         public EventHandler eventoBaja;
         public EventHandler eventoModificacion;
-        public EventHandler eventoLectura; 
+        public EventHandler eventoLectura;
 
         //Buscar en Archivos //////////////////////////////////////////////////////////////////////////////
         public List<T> Leer<T>()
@@ -419,7 +419,6 @@ namespace LogicaDeNegocios
             {
                 string Serializar = JsonConvert.SerializeObject(listreg);
                 escribir.Write(Serializar);
-
             }
             ObtenerListaGeneral();
         }
@@ -444,13 +443,33 @@ namespace LogicaDeNegocios
                         else
                         {
                             eventoModificacion(this, null);
-                            item.Nombre = alumno.Nombre;
-                            item.Apellido = alumno.Apellido;
-                            item.Email = alumno.Email;
-                            item.Sala = alumno.Sala;
-                            item.Sala.IdInstitucion = item.IdInstitucion;
-                            item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
-                            item.FechaNacimiento = alumno.FechaNacimiento;
+                            if (alumno.Notas.Length != 0) // siempre va a ser cero salvo que venga por AltaNota
+                            {
+                                var notaAlumno = Instancia.Leer<LogicaNota>().Find(x => x.Id == alumno.Notas[0].Id);
+
+                                if (item.Notas.FirstOrDefault(x => x.Id == notaAlumno.Id) == null)
+                                {
+                                    var NotasLogica = new LogicaNota[item.Notas.Length + 1];
+                                    for (int i = 0; i < NotasLogica.Length; i++)
+                                    {
+                                        if (i == NotasLogica.Length - 1)
+                                            NotasLogica[i] = notaAlumno;
+                                        else
+                                            NotasLogica[i] = item.Notas[i];
+                                    }
+                                    item.Notas = NotasLogica;
+                                }
+                            }
+                            else
+                            {
+                                item.Nombre = alumno.Nombre;
+                                item.Apellido = alumno.Apellido;
+                                item.Email = alumno.Email;
+                                item.Sala = alumno.Sala;
+                                item.Sala.IdInstitucion = item.IdInstitucion;
+                                item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
+                                item.FechaNacimiento = alumno.FechaNacimiento;
+                            }
                         }
                         listalum.RemoveAt(cont);
                         listalum.Insert(cont, item);
@@ -472,15 +491,58 @@ namespace LogicaDeNegocios
                 listalum.Add(alumno);
             }
 
-            using (StreamWriter escribir = new StreamWriter(ruta, false))
+            using (StreamWriter escribir = new StreamWriter(rutas, false))
             {
                 string Serializar = JsonConvert.SerializeObject(listalum);
                 escribir.Write(Serializar);
-
             }
             ObtenerListaGeneral();
         }
 
+        public void Guardar(LogicaNota usu, bool suprimir = false)
+        {
+            string rutas = Path.Combine(carpeta, LogicaNota);
+            var listreg = Leer<LogicaNota>();
+            int cont = 0; bool br = true;
+            if (listreg != null)
+            {
+                foreach (var item in listreg)
+                {
+                    if (item.Id == usu.Id)
+                    {
+                        eventoModificacion(this, null); // TODO > Cambiar todo refactorizar props
+                        item.Comentarios = usu.Comentarios;
+                        item.Leida = usu.Leida;
+                        listreg.RemoveAt(cont);
+                        listreg.Insert(cont, item);
+
+                        br = false;
+                        break;
+                    }
+                    cont++;
+                }
+                if (br)
+                {
+                    usu.FechaEventoAsociado = DateTime.Now;
+                    usu.Id = listreg.Count();
+                    listreg.Add(usu);
+                    eventoAlta(this, null);
+                }
+            }
+            else
+            {
+                listreg = new List<LogicaNota>();
+                usu.FechaEventoAsociado = DateTime.Now;
+                usu.Id = listreg.Count();
+                listreg.Add(usu);
+            }
+            using (StreamWriter escribir = new StreamWriter(rutas, false))
+            {
+                string Serializar = JsonConvert.SerializeObject(listreg);
+                escribir.Write(Serializar);
+            }
+
+        }
 
     }
 }

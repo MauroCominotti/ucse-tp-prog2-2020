@@ -13,5 +13,6 @@ namespace LogicaDeNegocios
         public int ResultadoUltimaEvaluacionAnual { get; set; }
         public LogicaSala Sala { get; set; }
         public LogicaNota[] Notas { get; set; }
+
     }
 }
