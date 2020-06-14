@@ -9,5 +9,14 @@ namespace LogicaDeNegocios
     public class LogicaPadre : LogicaUsuario
     {
         public List<LogicaHijo> Hijos { get; set; }
+
+        public void CopiarParametrosFaltantes(LogicaPadre padreSeleccionado)
+        {
+            Hijos = padreSeleccionado.Hijos;
+            Password = padreSeleccionado.Password;
+            Roles = padreSeleccionado.Roles;
+            RolSeleccionado = padreSeleccionado.RolSeleccionado;
+            IdInstitucion = padreSeleccionado.IdInstitucion;
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public ActionResult Login(LoginViewModel model)
         {
-            var resultado = CreateService(true).ObtenerUsuario(model.Email, model.Clave);
+            var resultado = CreateService().ObtenerUsuario(model.Email, model.Clave);
 
             if (resultado != null)
             {

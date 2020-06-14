@@ -11,5 +11,15 @@ namespace LogicaDeNegocios
         public LogicaInstitucion Institucion { get; set; }
         public string Cargo { get; set; }
         public DateTime? FechaIngreso { get; set; }
+
+        public void CopiarParametrosFaltantes(LogicaDirectora directoraSeleccionada)
+        {
+            Cargo = directoraSeleccionada.Cargo;
+            Institucion = directoraSeleccionada.Institucion;
+            Password = directoraSeleccionada.Password;
+            Roles = directoraSeleccionada.Roles;
+            RolSeleccionado = directoraSeleccionada.RolSeleccionado;
+            IdInstitucion = directoraSeleccionada.IdInstitucion;
+        }
     }
 }

@@ -10,20 +10,6 @@ namespace LogicaDeNegocios
 {
     public static class Empresa
     {
-        public static bool RegistroUsuario(string email) //Para ver si ya se logueo anteriormente
-        {
-            List<LogicaUsuario> Usuarios = Archivo.Instancia.Leer<LogicaUsuario>();
-            if (Usuarios != null)
-            {
-                LogicaUsuario us = Usuarios.Where(x => x.Email == email).FirstOrDefault();
-                if (us != null)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public static Resultado PermisosDirectora(Roles rol, UsuarioLogueado usuarioLogueado) //Acá para ver si tiene los permisos necesarios y si existe en la DB
         {
             Resultado result = new Resultado();

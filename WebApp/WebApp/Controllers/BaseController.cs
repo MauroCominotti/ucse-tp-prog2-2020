@@ -14,14 +14,12 @@ namespace WebApp.Controllers
     [Authorize]
     public class BaseController : Controller
     {
-        public static IServicioWeb CreateService(bool realService = false)
+        public static IServicioWeb CreateService()
         {
             //if (realService)
                 return new GeneralService();
             //else
             //    return new MockService();
-            /*return realService ? new GeneralService() : new MockService();*/ 
-            //TODO > Cambiar por el servicio real.  realService ? new RealService() : new MockService(); (no funciona el operador ternario)         
         }
 
         protected UsuarioLogueado usuarioLogueado;

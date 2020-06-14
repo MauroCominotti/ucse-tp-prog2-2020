@@ -21,7 +21,6 @@ namespace LogicaDeNegocios
         private string carpeta = AppDomain.CurrentDomain.BaseDirectory; //Para definir que los archivos se guarden en la carpeta del proyecto, o sea la carpeta base(webapp)
         private string[] arrayRutas = { LogicaDirectora, LogicaUsuario, LogicaInstitucion, LogicaPadre, LogicaHijo, LogicaDocente, LogicaSala, LogicaNota };
 
-        // TODO > Crear listas que al hacer get leer de los archivos y cuando modifiquen el set se correlacione con Guardar
         //SINGLETON //////////////////////////////////////////////////////////////////////////////
         private static Archivo instancia = null;
         public static Archivo Instancia
@@ -67,7 +66,7 @@ namespace LogicaDeNegocios
         }
 
 
-        public void ObtenerListaGeneral() // TODO > Actualiza la lista de Usuarios
+        public void ObtenerListaGeneral()
         {
             List<LogicaUsuario> usuarios = new List<LogicaUsuario>();
             var listadir = Leer<LogicaDirectora>();
@@ -184,42 +183,6 @@ namespace LogicaDeNegocios
         public void Guardar(List<LogicaUsuario> usu, bool suprimir = false)
         {
             string rutas = Path.Combine(carpeta, LogicaUsuario);
-            //List<LogicaUsuario> listusu = new List<LogicaUsuario>();
-            //listusu = Leer<LogicaUsuario>();
-            //int cont = 0; bool br = true;
-            //if (listusu != null)
-            //{
-            //    foreach (var item in listusu)
-            //    {
-            //        if (item.Id == usu.Id)
-            //        {
-            //            if (suprimir)
-            //            {
-            //                item.Eliminado = true;
-            //                eventoBaja(this, null);
-            //            }
-            //            else
-            //                eventoModificacion(this, null);
-            //            listusu.RemoveAt(cont);
-            //            listusu.Insert(cont, item);
-
-            //            br = false;
-            //            break;
-            //        }
-            //        cont++;
-            //    }
-            //    if (br)
-            //    {
-            //        listusu.Add(usu);
-            //        eventoAlta(this, null);
-            //    }
-            //}
-            //else
-            //{
-            //    listusu = new List<LogicaUsuario>();
-            //    listusu.Add(usu);
-            //}
-
             using (StreamWriter escribir = new StreamWriter(rutas, false))
             {
                 string Serializar = JsonConvert.SerializeObject(usu);
@@ -233,7 +196,7 @@ namespace LogicaDeNegocios
             string rutaarchivo = Path.Combine(carpeta, LogicaDocente);
             List<LogicaDocente> listdoc = new List<LogicaDocente>();
             listdoc = Leer<LogicaDocente>();
-            int cont = 0; bool ban = true; // TODO > Sacar bandera siempre PascalCase
+            int cont = 0; bool ban = true;
             if (listdoc != null)
             {
                 foreach (var item in listdoc)
@@ -252,25 +215,6 @@ namespace LogicaDeNegocios
                             item.Apellido = doc.Apellido;
                             item.Email = doc.Email;
                             item.Salas = doc.Salas;
-                            //if (doc.Salas.Length != 0)
-                            //{
-                            //    var salaDoc = Archivo.Instancia.Leer<LogicaSala>().Find(x => x.Id == doc.Salas[0].Id);
-
-                            //    if (item.Salas.FirstOrDefault(x => x.Id == salaDoc.Id) == null)
-                            //    {
-                            //        var salas = new LogicaSala[item.Salas.Length + 1];
-                            //        for (int i = 0; i < salas.Length; i++)
-                            //        {
-                            //            if (i == salas.Length - 1)
-                            //                salas[i] = salaDoc;
-                            //            else
-                            //                salas[i] = item.Salas[i];
-                            //        }
-                            //        item.Salas = salas;
-                            //    }
-                            //}
-                            //else
-                            //    item.Salas = new LogicaSala[] { };
                         }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
@@ -324,25 +268,6 @@ namespace LogicaDeNegocios
                             item.Apellido = doc.Apellido;
                             item.Email = doc.Email;
                             item.Hijos = doc.Hijos;
-                            //if (doc.Hijos.Length != 0)
-                            //{
-                            //    var hijoDoc = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Id == doc.Hijos[0].Id);
-
-                            //    if (item.Hijos.FirstOrDefault(x => x.Id == hijoDoc.Id) == null)
-                            //    {
-                            //        var hijos = new LogicaHijo[item.Hijos.Length + 1];
-                            //        for (int i = 0; i < hijos.Length; i++)
-                            //        {
-                            //            if (i == hijos.Length - 1)
-                            //                hijos[i] = hijoDoc;
-                            //            else
-                            //                hijos[i] = item.Hijos[i];
-                            //        }
-                            //        item.Hijos = hijos;
-                            //    }
-                            //}
-                            //else
-                            //    item.Hijos = new LogicaHijo[] { };
                         }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
@@ -391,7 +316,7 @@ namespace LogicaDeNegocios
                         }
                         else
                         {
-                            eventoModificacion(this, null); // TODO > Cambiar todo refactorizar props
+                            eventoModificacion(this, null);
                             item.Nombre = directivo.Nombre;
                             item.Apellido = directivo.Apellido;
                             item.Email = directivo.Email;
@@ -445,34 +370,6 @@ namespace LogicaDeNegocios
                         else
                         {
                             eventoModificacion(this, null);
-                            //if (alumno.Notas.Length != 0 && item.Notas.FirstOrDefault(x => x.Id == alumno.Notas[0].Id) == null) // siempre va a ser cero salvo que venga por AltaNota
-                            //{
-                            //    var notaAlumno = Instancia.Leer<LogicaNota>().Find(x => x.Id == alumno.Notas[0].Id);
-
-                            //    if (item.Notas.FirstOrDefault(x => x.Id == notaAlumno.Id) == null)
-                            //    {
-                            //        var NotasLogica = new LogicaNota[item.Notas.Length + 1];
-                            //        for (int i = 0; i < NotasLogica.Length; i++)
-                            //        {
-                            //            if (i == NotasLogica.Length - 1)
-                            //                NotasLogica[i] = notaAlumno;
-                            //            else
-                            //                NotasLogica[i] = item.Notas[i];
-                            //        }
-                            //        item.Notas = NotasLogica;
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    item.Notas = alumno.Notas;
-                            //    item.Nombre = alumno.Nombre;
-                            //    item.Apellido = alumno.Apellido;
-                            //    item.Email = alumno.Email;
-                            //    item.Sala = alumno.Sala;
-                            //    item.Sala.IdInstitucion = item.IdInstitucion;
-                            //    item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
-                            //    item.FechaNacimiento = alumno.FechaNacimiento;
-                            //}
                             item.Notas = alumno.Notas;
                             item.Nombre = alumno.Nombre;
                             item.Apellido = alumno.Apellido;
@@ -521,7 +418,7 @@ namespace LogicaDeNegocios
                 {
                     if (item.Id == usu.Id)
                     {
-                        eventoModificacion(this, null); // TODO > Cambiar todo refactorizar props
+                        eventoModificacion(this, null);
                         item.Comentarios = usu.Comentarios;
                         item.Leida = usu.Leida;
                         item.Comentarios = usu.Comentarios;
@@ -536,7 +433,7 @@ namespace LogicaDeNegocios
                 if (br)
                 {
                     usu.FechaEventoAsociado = DateTime.Now;
-                    usu.Id = listreg.Count();
+                    usu.Id = listreg.Count()+1;
                     listreg.Add(usu);
                     eventoAlta(this, null);
                 }
@@ -545,7 +442,7 @@ namespace LogicaDeNegocios
             {
                 listreg = new List<LogicaNota>();
                 usu.FechaEventoAsociado = DateTime.Now;
-                usu.Id = listreg.Count();
+                usu.Id = listreg.Count()+1;
                 listreg.Add(usu);
             }
             using (StreamWriter escribir = new StreamWriter(rutas, false))
