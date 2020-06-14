@@ -8,6 +8,6 @@ namespace LogicaDeNegocios
 {
     public class LogicaPadre : LogicaUsuario
     {
-        public LogicaHijo[] Hijos { get; set; }
+        public List<LogicaHijo> Hijos { get; set; }
     }
 }

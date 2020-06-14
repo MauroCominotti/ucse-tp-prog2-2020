@@ -8,6 +8,6 @@ namespace LogicaDeNegocios
 {
     public class LogicaDocente : LogicaUsuario
     {
-        public LogicaSala[] Salas { get; set; }
+        public List<LogicaSala> Salas { get; set; }
     }
 }

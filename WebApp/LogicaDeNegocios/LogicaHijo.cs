@@ -12,6 +12,6 @@ namespace LogicaDeNegocios
         public DateTime FechaNacimiento { get; set; }
         public int ResultadoUltimaEvaluacionAnual { get; set; }
         public LogicaSala Sala { get; set; }
-        public LogicaNota[] Notas { get; set; }
+        public List<LogicaNota> Notas { get; set; }
     }
 }

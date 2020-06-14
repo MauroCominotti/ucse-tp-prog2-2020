@@ -251,25 +251,26 @@ namespace LogicaDeNegocios
                             item.Nombre = doc.Nombre;
                             item.Apellido = doc.Apellido;
                             item.Email = doc.Email;
-                            if (doc.Salas.Length != 0)
-                            {
-                                var salaDoc = Archivo.Instancia.Leer<LogicaSala>().Find(x => x.Id == doc.Salas[0].Id);
+                            item.Salas = doc.Salas;
+                            //if (doc.Salas.Length != 0)
+                            //{
+                            //    var salaDoc = Archivo.Instancia.Leer<LogicaSala>().Find(x => x.Id == doc.Salas[0].Id);
 
-                                if (item.Salas.FirstOrDefault(x => x.Id == salaDoc.Id) == null)
-                                {
-                                    var salas = new LogicaSala[item.Salas.Length + 1];
-                                    for (int i = 0; i < salas.Length; i++)
-                                    {
-                                        if (i == salas.Length - 1)
-                                            salas[i] = salaDoc;
-                                        else
-                                            salas[i] = item.Salas[i];
-                                    }
-                                    item.Salas = salas;
-                                }
-                            }
-                            else
-                                item.Salas = new LogicaSala[] { };
+                            //    if (item.Salas.FirstOrDefault(x => x.Id == salaDoc.Id) == null)
+                            //    {
+                            //        var salas = new LogicaSala[item.Salas.Length + 1];
+                            //        for (int i = 0; i < salas.Length; i++)
+                            //        {
+                            //            if (i == salas.Length - 1)
+                            //                salas[i] = salaDoc;
+                            //            else
+                            //                salas[i] = item.Salas[i];
+                            //        }
+                            //        item.Salas = salas;
+                            //    }
+                            //}
+                            //else
+                            //    item.Salas = new LogicaSala[] { };
                         }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
@@ -322,25 +323,26 @@ namespace LogicaDeNegocios
                             item.Nombre = doc.Nombre;
                             item.Apellido = doc.Apellido;
                             item.Email = doc.Email;
-                            if (doc.Hijos.Length != 0)
-                            {
-                                var hijoDoc = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Id == doc.Hijos[0].Id);
+                            item.Hijos = doc.Hijos;
+                            //if (doc.Hijos.Length != 0)
+                            //{
+                            //    var hijoDoc = Archivo.Instancia.Leer<LogicaHijo>().Find(x => x.Id == doc.Hijos[0].Id);
 
-                                if (item.Hijos.FirstOrDefault(x => x.Id == hijoDoc.Id) == null)
-                                {
-                                    var hijos = new LogicaHijo[item.Hijos.Length + 1];
-                                    for (int i = 0; i < hijos.Length; i++)
-                                    {
-                                        if (i == hijos.Length - 1)
-                                            hijos[i] = hijoDoc;
-                                        else
-                                            hijos[i] = item.Hijos[i];
-                                    }
-                                    item.Hijos = hijos;
-                                }
-                            }
-                            else
-                                item.Hijos = new LogicaHijo[] { };
+                            //    if (item.Hijos.FirstOrDefault(x => x.Id == hijoDoc.Id) == null)
+                            //    {
+                            //        var hijos = new LogicaHijo[item.Hijos.Length + 1];
+                            //        for (int i = 0; i < hijos.Length; i++)
+                            //        {
+                            //            if (i == hijos.Length - 1)
+                            //                hijos[i] = hijoDoc;
+                            //            else
+                            //                hijos[i] = item.Hijos[i];
+                            //        }
+                            //        item.Hijos = hijos;
+                            //    }
+                            //}
+                            //else
+                            //    item.Hijos = new LogicaHijo[] { };
                         }
                         listdoc.RemoveAt(cont);
                         listdoc.Insert(cont, item);
@@ -443,34 +445,42 @@ namespace LogicaDeNegocios
                         else
                         {
                             eventoModificacion(this, null);
-                            if (alumno.Notas.Length != 0 && item.Notas.FirstOrDefault(x => x.Id == alumno.Notas[0].Id) == null) // siempre va a ser cero salvo que venga por AltaNota
-                            {
-                                var notaAlumno = Instancia.Leer<LogicaNota>().Find(x => x.Id == alumno.Notas[0].Id);
+                            //if (alumno.Notas.Length != 0 && item.Notas.FirstOrDefault(x => x.Id == alumno.Notas[0].Id) == null) // siempre va a ser cero salvo que venga por AltaNota
+                            //{
+                            //    var notaAlumno = Instancia.Leer<LogicaNota>().Find(x => x.Id == alumno.Notas[0].Id);
 
-                                if (item.Notas.FirstOrDefault(x => x.Id == notaAlumno.Id) == null)
-                                {
-                                    var NotasLogica = new LogicaNota[item.Notas.Length + 1];
-                                    for (int i = 0; i < NotasLogica.Length; i++)
-                                    {
-                                        if (i == NotasLogica.Length - 1)
-                                            NotasLogica[i] = notaAlumno;
-                                        else
-                                            NotasLogica[i] = item.Notas[i];
-                                    }
-                                    item.Notas = NotasLogica;
-                                }
-                            }
-                            else
-                            {
-                                item.Notas = alumno.Notas;
-                                item.Nombre = alumno.Nombre;
-                                item.Apellido = alumno.Apellido;
-                                item.Email = alumno.Email;
-                                item.Sala = alumno.Sala;
-                                item.Sala.IdInstitucion = item.IdInstitucion;
-                                item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
-                                item.FechaNacimiento = alumno.FechaNacimiento;
-                            }
+                            //    if (item.Notas.FirstOrDefault(x => x.Id == notaAlumno.Id) == null)
+                            //    {
+                            //        var NotasLogica = new LogicaNota[item.Notas.Length + 1];
+                            //        for (int i = 0; i < NotasLogica.Length; i++)
+                            //        {
+                            //            if (i == NotasLogica.Length - 1)
+                            //                NotasLogica[i] = notaAlumno;
+                            //            else
+                            //                NotasLogica[i] = item.Notas[i];
+                            //        }
+                            //        item.Notas = NotasLogica;
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    item.Notas = alumno.Notas;
+                            //    item.Nombre = alumno.Nombre;
+                            //    item.Apellido = alumno.Apellido;
+                            //    item.Email = alumno.Email;
+                            //    item.Sala = alumno.Sala;
+                            //    item.Sala.IdInstitucion = item.IdInstitucion;
+                            //    item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
+                            //    item.FechaNacimiento = alumno.FechaNacimiento;
+                            //}
+                            item.Notas = alumno.Notas;
+                            item.Nombre = alumno.Nombre;
+                            item.Apellido = alumno.Apellido;
+                            item.Email = alumno.Email;
+                            item.Sala = alumno.Sala;
+                            item.Sala.IdInstitucion = item.IdInstitucion;
+                            item.ResultadoUltimaEvaluacionAnual = alumno.ResultadoUltimaEvaluacionAnual;
+                            item.FechaNacimiento = alumno.FechaNacimiento;
                         }
                         listalum.RemoveAt(cont);
                         listalum.Insert(cont, item);
@@ -514,6 +524,7 @@ namespace LogicaDeNegocios
                         eventoModificacion(this, null); // TODO > Cambiar todo refactorizar props
                         item.Comentarios = usu.Comentarios;
                         item.Leida = usu.Leida;
+                        item.Comentarios = usu.Comentarios;
                         listreg.RemoveAt(cont);
                         listreg.Insert(cont, item);
 

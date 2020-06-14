@@ -13,6 +13,6 @@ namespace LogicaDeNegocios
         public string Descripcion { get; set; }
         public DateTime? FechaEventoAsociado { get; set; }
         public bool Leida { get; set; }
-        public LogicaComentario[] Comentarios { get; set; }
+        public List<LogicaComentario> Comentarios { get; set; }
     }
 }
